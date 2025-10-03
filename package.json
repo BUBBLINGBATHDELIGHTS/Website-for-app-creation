@@ -1,0 +1,16 @@
+{
+  "name": "bubbling-bath-boutique",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "install:all": "npm install --workspaces",
+    "dev:client": "npm --workspace client run dev",
+    "dev:server": "npm --workspace server run dev",
+    "build": "npm --workspace client run build",
+    "lint": "npm --workspace client run lint"
+  }
+}
