@@ -11,6 +11,7 @@
     "dev:client": "npm --workspace client run dev",
     "dev:server": "npm --workspace server run dev",
     "build": "npm --workspace client run build",
-    "lint": "npm --workspace client run lint"
+    "lint": "npm --workspace client run lint",
+    "migrate": "npm --workspace server run migrate"
   }
 }

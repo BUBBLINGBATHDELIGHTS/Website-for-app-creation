@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { getPool } from '../lib/database.js';
-import { createOrder, findOrderById } from '../lib/store.js';
+import { getDb } from '../lib/database.js';
 
 const router = Router();
 
@@ -40,61 +39,67 @@ const orderSchema = z.object({
 router.post('/', async (req, res, next) => {
   try {
     const payload = orderSchema.parse(req.body);
-    const pool = getPool();
+    const db = getDb();
 
-    if (!pool) {
-      const order = createOrder(payload);
-      res.status(201).json(order);
-      return;
-    }
+    const result = await db.transaction(async (trx) => {
+      const [customer] = await trx('customers')
+        .insert({
+          email: payload.customer.email,
+          name: payload.customer.name,
+          has_account: payload.customer.hasAccount
+        })
+        .onConflict('email')
+        .merge({ name: payload.customer.name, has_account: payload.customer.hasAccount })
+        .returning('*');
 
-    await pool.query('BEGIN');
+      const [order] = await trx('orders')
+        .insert({
+          customer_id: customer.id,
+          subtotal: payload.totals.subtotal,
+          discount: payload.totals.discount,
+          total: payload.totals.total,
+          payment_brand: payload.payment.brand,
+          payment_last4: payload.payment.last4
+        })
+        .returning('*');
 
-    const customerResult = await pool.query(
-      `INSERT INTO customers (email, name, has_account)
-       VALUES ($1,$2,$3)
-       ON CONFLICT (email) DO UPDATE SET name = $2, has_account = $3
-       RETURNING id`,
-      [payload.customer.email, payload.customer.name, payload.customer.hasAccount]
-    );
+      await trx('shipping_addresses').insert({
+        order_id: order.id,
+        address_line: payload.customer.address,
+        city: payload.customer.city,
+        postal_code: payload.customer.postalCode
+      });
 
-    const customerId = customerResult.rows[0].id;
+      for (const item of payload.items) {
+        await trx('order_items').insert({
+          order_id: order.id,
+          product_id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          unit_price: item.price
+        });
 
-    const orderResult = await pool.query(
-      `INSERT INTO orders (customer_id, subtotal, discount, total, payment_brand, payment_last4)
-       VALUES ($1,$2,$3,$4,$5,$6)
-       RETURNING id, created_at`,
-      [
-        customerId,
-        payload.totals.subtotal,
-        payload.totals.discount,
-        payload.totals.total,
-        payload.payment.brand,
-        payload.payment.last4
-      ]
-    );
+        await trx('products')
+          .where({ id: item.id })
+          .decrement('inventory', item.quantity);
 
-    const orderId = orderResult.rows[0].id;
+        await trx('inventory_ledger').insert({
+          product_id: item.id,
+          delta: -item.quantity,
+          reason: `Order ${order.id}`
+        });
+      }
 
-    for (const item of payload.items) {
-      await pool.query(
-        `INSERT INTO order_items (order_id, product_id, name, quantity, unit_price)
-         VALUES ($1,$2,$3,$4,$5)`,
-        [orderId, item.id, item.name, item.quantity, item.price]
-      );
-      await pool.query(`UPDATE products SET inventory = inventory - $1 WHERE id = $2`, [item.quantity, item.id]);
-    }
-
-    await pool.query('COMMIT');
+      return order;
+    });
 
     res.status(201).json({
-      id: orderId,
-      createdAt: orderResult.rows[0].created_at,
+      id: result.id,
+      createdAt: result.created_at instanceof Date ? result.created_at.toISOString() : result.created_at,
       rewardProgress: Math.min(100, Math.round(payload.totals.total * 5)),
       tier: payload.totals.total > 150 ? 'VIP Splash' : 'Soak Star'
     });
   } catch (error) {
-    await getPool()?.query('ROLLBACK');
     next(error);
   }
 });
@@ -102,74 +107,74 @@ router.post('/', async (req, res, next) => {
 router.get('/:orderId', async (req, res, next) => {
   try {
     const { orderId } = req.params;
-    const pool = getPool();
+    const db = getDb();
 
-    if (!pool) {
-      const order = findOrderById(orderId);
-      if (!order) {
-        res.status(404).json({ message: 'Order not found' });
-        return;
-      }
-      res.json(order);
-      return;
-    }
+    const order = await db('orders as o')
+      .select(
+        'o.id',
+        'o.created_at',
+        'o.subtotal',
+        'o.discount',
+        'o.total',
+        'c.name as customer_name',
+        'c.email',
+        'c.has_account',
+        's.address_line',
+        's.city',
+        's.postal_code'
+      )
+      .leftJoin('customers as c', 'c.id', 'o.customer_id')
+      .leftJoin('shipping_addresses as s', 's.order_id', 'o.id')
+      .where('o.id', orderId)
+      .first();
 
-    const orderResult = await pool.query(
-      `SELECT o.id, o.created_at, o.subtotal, o.discount, o.total,
-              c.name as customer_name, c.email, c.has_account, s.address_line, s.city, s.postal_code
-       FROM orders o
-       JOIN customers c ON c.id = o.customer_id
-       LEFT JOIN shipping_addresses s ON s.order_id = o.id
-       WHERE o.id = $1`,
-      [orderId]
-    );
-
-    if (orderResult.rows.length === 0) {
+    if (!order) {
       res.status(404).json({ message: 'Order not found' });
       return;
     }
 
-    const itemsResult = await pool.query(
-      `SELECT product_id, name, quantity, unit_price FROM order_items WHERE order_id = $1`,
-      [orderId]
-    );
+    const items = await db('order_items')
+      .select('product_id', 'name', 'quantity', 'unit_price')
+      .where('order_id', orderId);
+
+    const createdAt = order.created_at instanceof Date ? order.created_at.toISOString() : order.created_at;
 
     res.json({
-      id: orderId,
-      createdAt: orderResult.rows[0].created_at,
+      id: order.id,
+      createdAt,
       customer: {
-        name: orderResult.rows[0].customer_name,
-        email: orderResult.rows[0].email,
-        address: orderResult.rows[0].address_line,
-        city: orderResult.rows[0].city,
-        postalCode: orderResult.rows[0].postal_code
+        name: order.customer_name,
+        email: order.email,
+        address: order.address_line,
+        city: order.city,
+        postalCode: order.postal_code
       },
-      items: itemsResult.rows.map((row) => ({
-        id: row.product_id,
-        name: row.name,
-        quantity: row.quantity,
-        price: Number(row.unit_price)
+      items: items.map((item) => ({
+        id: item.product_id,
+        name: item.name,
+        quantity: item.quantity,
+        price: Number(item.unit_price)
       })),
       totals: {
-        subtotal: Number(orderResult.rows[0].subtotal),
-        discount: Number(orderResult.rows[0].discount),
-        total: Number(orderResult.rows[0].total)
+        subtotal: Number(order.subtotal),
+        discount: Number(order.discount),
+        total: Number(order.total)
       },
       fulfillment: {
         carrier: 'BubblePost',
         trackingNumber: `BB-${Math.random().toString(36).slice(2, 8).toUpperCase()}`
       },
       timeline: [
-        { status: 'Order Placed', description: 'We received your order', timestamp: orderResult.rows[0].created_at },
+        { status: 'Order Placed', description: 'We received your order', timestamp: createdAt },
         {
           status: 'In Production',
           description: 'Hand-pressing your artisanal goodies',
-          timestamp: new Date(new Date(orderResult.rows[0].created_at).getTime() + 60 * 60 * 1000)
+          timestamp: new Date(new Date(createdAt).getTime() + 60 * 60 * 1000).toISOString()
         },
         {
           status: 'Ready to Ship',
           description: 'Packed with eco-friendly materials',
-          timestamp: new Date(new Date(orderResult.rows[0].created_at).getTime() + 2 * 60 * 60 * 1000)
+          timestamp: new Date(new Date(createdAt).getTime() + 2 * 60 * 60 * 1000).toISOString()
         }
       ]
     });

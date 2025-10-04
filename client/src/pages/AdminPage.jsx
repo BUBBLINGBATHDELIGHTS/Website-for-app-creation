@@ -2,22 +2,23 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClipboardList, Package, Percent, Users, PlusCircle } from 'lucide-react';
 import api from '../api/client.js';
-import { demoProducts } from '../data/initialProducts.js';
 
 export default function AdminPage() {
   const queryClient = useQueryClient();
   const [filters, setFilters] = useState({ status: 'all' });
 
-  const { data: products } = useQuery({
+  const { data: products = [], isLoading, isError } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
       const response = await api.get('/products');
       return response.data;
-    },
-    initialData: demoProducts
+    }
   });
 
   const inventoryStats = useMemo(() => {
+    if (products.length === 0) {
+      return { totalSkus: 0, lowStock: 0, averagePrice: 0 };
+    }
     const totalSkus = products.length;
     const lowStock = products.filter((product) => product.inventory < 25).length;
     const averagePrice = products.reduce((acc, product) => acc + product.price, 0) / totalSkus;
@@ -54,14 +55,21 @@ export default function AdminPage() {
                 imageUrl: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80'
               })
             }
+            disabled={createMutation.isPending}
           >
             <PlusCircle className="h-4 w-4" />
-            Quick Add Product
+            {createMutation.isPending ? 'Adding…' : 'Quick Add Product'}
           </button>
         </div>
       </header>
 
       <main className="px-6 py-6 space-y-6">
+        {isError && (
+          <div className="rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+            Unable to load products from Supabase. Confirm your API URL and database connection.
+          </div>
+        )}
+
         <section className="grid gap-4 sm:grid-cols-3">
           <StatCard
             icon={Package}
@@ -72,7 +80,7 @@ export default function AdminPage() {
           <StatCard
             icon={Percent}
             label="Average Price"
-            value={`$${inventoryStats.averagePrice.toFixed(2)}`}
+            value={products.length > 0 ? `$${inventoryStats.averagePrice.toFixed(2)}` : '—'}
             helperText="Across all products"
           />
           <StatCard
@@ -107,49 +115,55 @@ export default function AdminPage() {
               </div>
             </div>
           </header>
-          <div className="divide-y divide-gray-100">
-            {products
-              .filter((product) => {
-                if (filters.status === 'low') {
-                  return product.inventory < 25;
-                }
-                if (filters.status === 'in-stock') {
-                  return product.inventory >= 25;
-                }
-                return true;
-              })
-              .map((product) => {
-                const status = product.inventory < 25 ? 'Low' : 'Healthy';
-              const statusColor = status === 'Low' ? 'bg-red-100 text-red-600' : 'bg-mint/20 text-mint';
-              return (
-                <article key={product.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-6 py-4">
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="h-20 w-20 rounded-2xl object-cover"
-                    />
-                    <div>
-                      <h3 className="font-semibold text-charcoal">{product.name}</h3>
-                      <p className="text-sm text-gray-500">{product.category}</p>
-                      <p className="text-xs text-gray-400">SKU: {product.id.slice(0, 8)}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-6">
-                    <div className="text-right">
-                      <p className="text-sm text-gray-500">Price</p>
-                      <p className="text-lg font-semibold text-charcoal">${product.price.toFixed(2)}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-500">Inventory</p>
-                      <p className="text-lg font-semibold text-charcoal">{product.inventory}</p>
-                    </div>
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusColor}`}>{status}</span>
-                  </div>
-                </article>
-              );
-              })}
-          </div>
+          {isLoading ? (
+            <div className="flex items-center justify-center px-6 py-12 text-sm text-gray-500">Loading catalogue…</div>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {products.length === 0 ? (
+                <div className="px-6 py-12 text-center text-sm text-gray-500">
+                  No products found. Add items above or seed your Supabase database.
+                </div>
+              ) : (
+                products
+                  .filter((product) => {
+                    if (filters.status === 'low') {
+                      return product.inventory < 25;
+                    }
+                    if (filters.status === 'in-stock') {
+                      return product.inventory >= 25;
+                    }
+                    return true;
+                  })
+                  .map((product) => {
+                    const status = product.inventory < 25 ? 'Low' : 'Healthy';
+                    const statusColor = status === 'Low' ? 'bg-red-100 text-red-600' : 'bg-mint/20 text-mint';
+                    return (
+                      <article key={product.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <img src={product.imageUrl} alt={product.name} className="h-20 w-20 rounded-2xl object-cover" />
+                          <div>
+                            <h3 className="font-semibold text-charcoal">{product.name}</h3>
+                            <p className="text-sm text-gray-500">{product.category}</p>
+                            <p className="text-xs text-gray-400">SKU: {product.id.slice(0, 8)}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-6">
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500">Price</p>
+                            <p className="text-lg font-semibold text-charcoal">${product.price.toFixed(2)}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500">Inventory</p>
+                            <p className="text-lg font-semibold text-charcoal">{product.inventory}</p>
+                          </div>
+                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusColor}`}>{status}</span>
+                        </div>
+                      </article>
+                    );
+                  })
+              )}
+            </div>
+          )}
         </section>
       </main>
     </div>

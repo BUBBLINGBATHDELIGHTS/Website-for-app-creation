@@ -5,12 +5,23 @@ import dotenv from 'dotenv';
 import productsRouter from './routes/products.js';
 import ordersRouter from './routes/orders.js';
 import paymentsRouter from './routes/payments.js';
-import { ensureDatabase } from './lib/database.js';
+import { ensureDatabase, closeDb } from './lib/database.js';
 
 dotenv.config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' });
 
 const app = express();
-app.use(cors());
+
+const allowedOrigin = process.env.CLIENT_ORIGIN;
+app.use(
+  cors(
+    allowedOrigin
+      ? {
+          origin: allowedOrigin,
+          credentials: true
+        }
+      : {}
+  )
+);
 app.use(express.json({ limit: '2mb' }));
 app.use(morgan('tiny'));
 
@@ -36,5 +47,15 @@ if (process.env.NODE_ENV !== 'test') {
       process.exit(1);
     });
 }
+
+process.on('SIGINT', async () => {
+  await closeDb();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  await closeDb();
+  process.exit(0);
+});
 
 export default app;

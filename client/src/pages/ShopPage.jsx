@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Heart, Search, Star, Filter, Sparkles, Timer, Flame, Bell, UserPlus } from 'lucide-react';
 import api from '../api/client.js';
-import { demoProducts, categories } from '../data/initialProducts.js';
+import { categories } from '../data/initialProducts.js';
 import { useCart } from '../context/CartContext.jsx';
 
 function useProducts() {
@@ -12,13 +12,13 @@ function useProducts() {
       const response = await api.get('/products');
       return response.data;
     },
-    initialData: demoProducts
+    placeholderData: []
   });
 }
 
 export default function ShopPage({ onOpenCart, onOpenCheckout }) {
   const { dispatch, state } = useCart();
-  const { data: products } = useProducts();
+  const { data: products = [] } = useProducts();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -118,72 +118,76 @@ export default function ShopPage({ onOpenCart, onOpenCheckout }) {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
                 <div className="rounded-2xl bg-lavender/15 p-3 text-lavender">
-                  <UserPlus className="h-5 w-5" />
+                  <Sparkles className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-charcoal">Create a boutique account</p>
-                  <p className="text-xs text-gray-500">Unlock an instant 10% discount and start earning fizz points.</p>
+                  <p className="text-sm font-semibold text-gray-600">Members save 10%</p>
+                  <p className="text-xs text-gray-500">Sign up to unlock gamified rewards and refill reminders.</p>
                 </div>
               </div>
               <button
                 type="button"
-                onClick={() =>
-                  dispatch({
-                    type: 'SET_CUSTOMER',
-                    payload: {
-                      email: state.customer?.email || 'guest@bubblingbath.com',
-                      name: state.customer?.name || 'Guest',
-                      hasAccount: true
-                    }
-                  })
-                }
-                className="rounded-full bg-lavender px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#a696dd]"
+                className="flex items-center gap-2 rounded-full border border-lavender bg-white px-4 py-2 text-sm font-semibold text-lavender hover:bg-lavender hover:text-white transition-colors"
               >
-                Activate 10% off
+                <UserPlus className="h-4 w-4" />
+                Join Rewards
               </button>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="search"
-                placeholder="Search bubbly delights"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                className="w-full rounded-full border border-gray-200 bg-white px-10 py-2 text-sm focus:border-mint focus:outline-none"
-              />
-            </div>
-            <div className="flex items-center gap-2 overflow-x-auto">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  type="button"
-                  onClick={() => setSelectedCategory(category)}
-                  className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-all ${
-                    selectedCategory === category
-                      ? 'bg-lavender text-white border-lavender shadow-sm'
-                      : 'border-gray-200 text-gray-600 hover:border-mint'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+
+          <div className="rounded-3xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="search"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder="Search ritual upgrades"
+                  className="w-full rounded-full border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm focus:border-lavender focus:outline-none"
+                />
+              </div>
               <button
                 type="button"
-                className="flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:border-mint"
+                className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-600"
               >
                 <Filter className="h-4 w-4" />
                 Filters
               </button>
             </div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => setSelectedCategory(category)}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                    selectedCategory === category
+                      ? 'bg-lavender text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex items-center mb-2">
-            <Sparkles className="text-lavender mr-2 h-5 w-5" />
+        </section>
+
+        <section className="px-4 space-y-4">
+          <header className="flex items-center mb-2">
+            <Sparkles className="mr-2 h-5 w-5 text-lavender" />
             <h2 className="text-xl font-bold text-charcoal">For You</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {filteredProducts.map((product) => (
+          </header>
+
+          <div className="grid grid-cols-2 gap-4">
+            {filteredProducts.length === 0 ? (
+              <div className="col-span-2 rounded-2xl border border-dashed border-gray-200 bg-white/70 px-6 py-10 text-center text-sm text-gray-500">
+                No products yet. Add items from the admin console once your Supabase tables are populated.
+              </div>
+            ) : (
+              filteredProducts.map((product) => (
               <article
                 key={product.id}
                 className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
@@ -195,31 +199,25 @@ export default function ShopPage({ onOpenCart, onOpenCheckout }) {
                       {product.badges[0]}
                     </span>
                   )}
-                  <button className="absolute top-2 right-2 p-2 rounded-full bg-white text-gray-400 hover:text-red-500" type="button">
+                  <button className="absolute top-2 right-2 p-2 rounded-full transition-colors bg-white text-gray-400 hover:text-red-500" type="button">
                     <Heart className="h-4 w-4" />
                   </button>
                 </div>
-                <div className="p-4 space-y-3">
-                  <div>
-                    <h3 className="font-semibold text-charcoal mb-1 line-clamp-2">{product.name}</h3>
-                    <p className="text-sm text-gray-500 line-clamp-2">{product.description}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
+                <div className="p-4">
+                  <h3 className="font-semibold text-charcoal mb-2 line-clamp-2">{product.name}</h3>
+                  <div className="flex items-center mb-2">
                     <div className="flex items-center">
-                      <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                      <span className="text-sm text-gray-600 ml-1">
-                        {product.rating.toFixed(1)} ({product.reviews})
-                      </span>
+                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      <span className="text-sm text-gray-600 ml-1">{product.rating?.toFixed(1) ?? '4.8'}</span>
                     </div>
-                    <span className="text-xs text-gray-500">{product.inventory} in stock</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <span className="text-lg font-bold text-charcoal">
-                        ${product.price.toFixed(2)}
-                      </span>
+                      <span className="text-lg font-bold text-charcoal">${product.price.toFixed(2)}</span>
                       {product.compareAtPrice && (
-                        <span className="text-sm text-gray-500 line-through">${product.compareAtPrice.toFixed(2)}</span>
+                        <span className="text-sm text-gray-500 line-through">
+                          ${product.compareAtPrice.toFixed(2)}
+                        </span>
                       )}
                     </div>
                     <button
@@ -227,13 +225,7 @@ export default function ShopPage({ onOpenCart, onOpenCheckout }) {
                       onClick={() =>
                         dispatch({
                           type: 'ADD_ITEM',
-                          payload: {
-                            id: product.id,
-                            name: product.name,
-                            price: product.price,
-                            quantity: 1,
-                            imageUrl: product.imageUrl
-                          }
+                          payload: { id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl }
                         })
                       }
                       className="bg-mint text-white p-2 rounded-full hover:bg-[#6FA897] transition-colors"
@@ -258,7 +250,8 @@ export default function ShopPage({ onOpenCart, onOpenCheckout }) {
                   </div>
                 </div>
               </article>
-            ))}
+              ))
+            )}
           </div>
         </section>
       </main>

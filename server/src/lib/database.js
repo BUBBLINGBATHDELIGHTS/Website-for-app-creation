@@ -1,55 +1,47 @@
-import { Pool } from 'pg';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import knex from 'knex';
+import knexConfig from '../../knexfile.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+let dbInstance;
 
-let pool;
-
-export function getPool() {
-  if (!pool) {
+export function getDb() {
+  if (!dbInstance) {
+    const environment = process.env.NODE_ENV || 'development';
     const connectionString = process.env.DATABASE_URL;
+
     if (!connectionString) {
-      console.warn('DATABASE_URL not configured. Falling back to in-memory store.');
-      return null;
+      throw new Error('DATABASE_URL is required to connect to Supabase Postgres.');
     }
 
-    pool = new Pool({ connectionString, ssl: process.env.PGSSLMODE === 'require' ? { rejectUnauthorized: false } : undefined });
+    const config = knexConfig[environment];
+
+    if (!config) {
+      throw new Error(`Knex configuration missing for environment: ${environment}`);
+    }
+
+    dbInstance = knex({
+      ...config,
+      connection: {
+        connectionString,
+        ssl:
+          config.connection?.ssl ??
+          (process.env.PGSSLMODE === 'require' || process.env.NODE_ENV === 'production'
+            ? { rejectUnauthorized: false }
+            : false)
+      }
+    });
   }
 
-  return pool;
+  return dbInstance;
 }
 
 export async function ensureDatabase() {
-  const pgPool = getPool();
-  if (!pgPool) {
-    return;
-  }
-
-  const client = await pgPool.connect();
-  try {
-    await client.query('SELECT NOW()');
-  } finally {
-    client.release();
-  }
+  const db = getDb();
+  await db.raw('select 1');
 }
 
-export async function runMigrations() {
-  const pgPool = getPool();
-  if (!pgPool) {
-    throw new Error('Cannot run migrations without DATABASE_URL');
-  }
-
-  const migrationsDir = path.resolve(__dirname, '../../migrations');
-  const files = fs
-    .readdirSync(migrationsDir)
-    .filter((file) => file.endsWith('.sql'))
-    .sort();
-
-  for (const file of files) {
-    const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf-8');
-    await pgPool.query(sql);
+export async function closeDb() {
+  if (dbInstance) {
+    await dbInstance.destroy();
+    dbInstance = undefined;
   }
 }
