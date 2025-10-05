@@ -89,7 +89,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p className="mt-6 text-center text-xs text-gray-400">
-          Need an account? Invite your team from the Supabase dashboard and assign <span className="font-semibold text-lavender">role = admin</span> to grant access.
+          Need an account? Invite your team from Supabase and assign <span className="font-semibold text-lavender">role = admin</span> for the console or <span className="font-semibold text-lavender">role = employee</span> for the fulfillment dashboard.
         </p>
       </div>
     </div>

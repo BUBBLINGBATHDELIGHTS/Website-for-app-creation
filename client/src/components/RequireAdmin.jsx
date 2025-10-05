@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
-export default function RequireAdmin({ children }) {
+export default function RequireAdmin({ children, allowedRoles = ['admin'] }) {
   const { role, loading } = useAuth();
   const location = useLocation();
 
@@ -15,7 +15,7 @@ export default function RequireAdmin({ children }) {
     );
   }
 
-  if (role !== 'admin') {
+  if (!allowedRoles.includes(role)) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 

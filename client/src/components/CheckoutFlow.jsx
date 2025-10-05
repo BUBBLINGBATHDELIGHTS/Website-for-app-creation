@@ -1,6 +1,7 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { CheckCircle2, CreditCard, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/client.js';
 import { useCart } from '../context/CartContext.jsx';
 
@@ -8,6 +9,7 @@ const steps = ['Contact', 'Shipping', 'Payment'];
 
 export default function CheckoutFlow({ open, onClose }) {
   const { state, dispatch } = useCart();
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [orderId, setOrderId] = useState(null);
@@ -19,8 +21,47 @@ export default function CheckoutFlow({ open, onClose }) {
     city: '',
     postalCode: '',
     cardHolder: '',
-    cardLast4: '4242'
+    cardLast4: '4242',
+    createAccount: !state.customer?.hasAccount,
+    password: '',
+    wantsMarketing: true,
+    discountCode: ''
   });
+
+  useEffect(() => {
+    if (open) {
+      setForm((prev) => ({ ...prev, createAccount: !state.customer?.hasAccount }));
+    }
+  }, [open, state.customer?.hasAccount]);
+
+  const subtotal = useMemo(
+    () => state.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [state.items]
+  );
+  const manualDiscount = useMemo(
+    () => state.discounts.reduce((sum, discount) => sum + subtotal * (discount.amount || 0), 0),
+    [state.discounts, subtotal]
+  );
+  const loyaltyEligible = form.createAccount || state.customer?.hasAccount;
+  const loyaltyDiscount = loyaltyEligible ? subtotal * 0.1 : 0;
+  const discount = manualDiscount + loyaltyDiscount;
+  const total = Math.max(0, subtotal - discount);
+  const hasItems = state.items.length > 0;
+
+  const canAdvance = () => {
+    if (activeStep === 0) {
+      return Boolean(form.email && form.name);
+    }
+    if (activeStep === 1) {
+      const hasAddress = form.address && form.city && form.postalCode;
+      const hasPassword = !form.createAccount || form.password.length >= 6;
+      return Boolean(hasAddress && hasPassword);
+    }
+    if (activeStep === 2) {
+      return Boolean(form.cardHolder && form.cardLast4.length === 4);
+    }
+    return true;
+  };
 
   const handleClose = () => {
     setActiveStep(0);
@@ -33,16 +74,14 @@ export default function CheckoutFlow({ open, onClose }) {
       city: '',
       postalCode: '',
       cardHolder: '',
-      cardLast4: '4242'
+      cardLast4: '4242',
+      createAccount: !state.customer?.hasAccount,
+      password: '',
+      wantsMarketing: true,
+      discountCode: ''
     });
     onClose();
   };
-
-  const subtotal = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const discountRate = state.discounts.reduce((sum, discount) => sum + (discount.amount || 0), 0);
-  const discount = subtotal * discountRate;
-  const total = subtotal - discount;
-  const hasItems = state.items.length > 0;
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -55,7 +94,9 @@ export default function CheckoutFlow({ open, onClose }) {
           address: form.address,
           city: form.city,
           postalCode: form.postalCode,
-          hasAccount: Boolean(state.customer?.hasAccount)
+          createAccount: form.createAccount,
+          password: form.password || undefined,
+          wantsMarketing: form.wantsMarketing
         },
         items: state.items,
         payment: {
@@ -67,7 +108,8 @@ export default function CheckoutFlow({ open, onClose }) {
           subtotal,
           discount,
           total
-        }
+        },
+        discountCode: form.discountCode || undefined
       });
 
       const createdOrder = response.data;
@@ -79,6 +121,10 @@ export default function CheckoutFlow({ open, onClose }) {
           nextRewardProgress: createdOrder.rewardProgress,
           tier: createdOrder.tier
         }
+      });
+      dispatch({
+        type: 'SET_CUSTOMER',
+        payload: { email: form.email, hasAccount: form.createAccount || state.customer?.hasAccount }
       });
       dispatch({ type: 'RESET_CART' });
       setActiveStep(steps.length);
@@ -117,11 +163,11 @@ export default function CheckoutFlow({ open, onClose }) {
             >
               <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-3xl bg-white shadow-xl transition-all">
                 <div className="px-6 py-5 border-b border-gray-200">
-                  <Dialog.Title className="text-lg font-semibold text-charcoal">
-                    Secure Checkout
-                  </Dialog.Title>
+                  <Dialog.Title className="text-lg font-semibold text-charcoal">Secure Checkout</Dialog.Title>
                   <p className="text-sm text-gray-500">
-                    Complete your order and earn fizz points for future rewards.
+                    {loyaltyEligible
+                      ? 'You are earning a 10% loyalty discount with full order tracking.'
+                      : 'Guest checkout keeps things quick—add a password to save 10%.'}
                   </p>
                 </div>
                 <div className="px-6 py-4 space-y-6">
@@ -136,17 +182,13 @@ export default function CheckoutFlow({ open, onClose }) {
                           {index + 1}
                         </span>
                         <span className="text-sm font-medium text-charcoal">{step}</span>
-                        {index < steps.length - 1 && (
-                          <span className="h-px w-8 bg-gray-200" aria-hidden="true"></span>
-                        )}
+                        {index < steps.length - 1 && <span className="h-px w-8 bg-gray-200" aria-hidden="true" />}
                       </div>
                     ))}
                   </nav>
 
                   {error && (
-                    <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
-                      {error}
-                    </div>
+                    <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
                   )}
 
                   {activeStep === 0 && (
@@ -171,6 +213,16 @@ export default function CheckoutFlow({ open, onClose }) {
                           onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
                           className="rounded-xl border border-gray-200 px-4 py-2 text-sm focus:border-mint focus:outline-none"
                           placeholder="Bubbly Enthusiast"
+                        />
+                      </label>
+                      <label className="grid gap-1 text-sm font-medium text-charcoal">
+                        Discount code
+                        <input
+                          type="text"
+                          value={form.discountCode}
+                          onChange={(event) => setForm((prev) => ({ ...prev, discountCode: event.target.value }))}
+                          className="rounded-xl border border-gray-200 px-4 py-2 text-sm focus:border-mint focus:outline-none"
+                          placeholder="SPRING10"
                         />
                       </label>
                     </div>
@@ -198,7 +250,6 @@ export default function CheckoutFlow({ open, onClose }) {
                             value={form.city}
                             onChange={(event) => setForm((prev) => ({ ...prev, city: event.target.value }))}
                             className="rounded-xl border border-gray-200 px-4 py-2 text-sm focus:border-mint focus:outline-none"
-                            placeholder="Bathville"
                           />
                         </label>
                         <label className="grid gap-1 text-sm font-medium text-charcoal">
@@ -209,103 +260,130 @@ export default function CheckoutFlow({ open, onClose }) {
                             value={form.postalCode}
                             onChange={(event) => setForm((prev) => ({ ...prev, postalCode: event.target.value }))}
                             className="rounded-xl border border-gray-200 px-4 py-2 text-sm focus:border-mint focus:outline-none"
-                            placeholder="90210"
                           />
                         </label>
                       </div>
+                      <label className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                        <input
+                          type="checkbox"
+                          checked={form.createAccount}
+                          onChange={(event) => setForm((prev) => ({ ...prev, createAccount: event.target.checked }))}
+                          className="h-4 w-4 rounded border-gray-300 text-lavender"
+                        />
+                        Create a Bubbling account and save 10% today
+                      </label>
+                      {form.createAccount && (
+                        <label className="grid gap-1 text-sm font-medium text-charcoal">
+                          Choose a password
+                          <input
+                            type="password"
+                            required={form.createAccount}
+                            value={form.password}
+                            onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+                            className="rounded-xl border border-gray-200 px-4 py-2 text-sm focus:border-mint focus:outline-none"
+                            placeholder="••••••••"
+                          />
+                        </label>
+                      )}
+                      <label className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                        <input
+                          type="checkbox"
+                          checked={form.wantsMarketing}
+                          onChange={(event) => setForm((prev) => ({ ...prev, wantsMarketing: event.target.checked }))}
+                          className="h-4 w-4 rounded border-gray-300 text-lavender"
+                        />
+                        Email me fizz updates and order notifications
+                      </label>
                     </div>
                   )}
 
                   {activeStep === 2 && (
                     <div className="grid gap-4">
-                      <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-600 flex items-center gap-3">
-                        <CreditCard className="h-5 w-5 text-lavender" />
-                        <span>Payments are securely processed via Stripe.</span>
-                      </div>
                       <label className="grid gap-1 text-sm font-medium text-charcoal">
-                        Cardholder name
+                        Card holder
                         <input
                           type="text"
                           required
                           value={form.cardHolder}
                           onChange={(event) => setForm((prev) => ({ ...prev, cardHolder: event.target.value }))}
                           className="rounded-xl border border-gray-200 px-4 py-2 text-sm focus:border-mint focus:outline-none"
-                          placeholder="Name on card"
+                          placeholder="As shown on card"
                         />
                       </label>
                       <label className="grid gap-1 text-sm font-medium text-charcoal">
-                        Last 4 digits
+                        Last four digits
                         <input
                           type="text"
-                          maxLength={4}
                           required
                           value={form.cardLast4}
                           onChange={(event) => setForm((prev) => ({ ...prev, cardLast4: event.target.value }))}
                           className="rounded-xl border border-gray-200 px-4 py-2 text-sm focus:border-mint focus:outline-none"
                           placeholder="4242"
+                          maxLength={4}
                         />
                       </label>
                     </div>
                   )}
+
+                  <aside className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                    <div className="flex items-center justify-between">
+                      <span>Subtotal</span>
+                      <span>${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-mint">
+                      <span>Discounts</span>
+                      <span>- ${discount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center justify-between font-semibold text-charcoal">
+                      <span>Total due</span>
+                      <span>${total.toFixed(2)}</span>
+                    </div>
+                  </aside>
                 </div>
-                <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+
+                <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (activeStep === 0) {
+                        handleClose();
+                      } else {
+                        setActiveStep((prev) => prev - 1);
+                      }
+                    }}
+                    className="text-sm font-semibold text-gray-500"
+                  >
+                    {activeStep === 0 ? 'Cancel' : 'Back'}
+                  </button>
                   {activeStep >= steps.length ? (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <CheckCircle2 className="h-6 w-6 text-mint" />
-                        <div>
-                          <p className="font-semibold text-charcoal">Order confirmed!</p>
-                          <p className="text-sm text-gray-500">
-                            Track your order status in the profile tab or bookmark the tracking page.
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        className="rounded-full bg-lavender px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#a696dd]"
-                        onClick={handleClose}
-                      >
-                        Close
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleClose();
+                        if (orderId) {
+                          navigate(`/orders/${orderId}`);
+                        }
+                      }}
+                      className="inline-flex items-center gap-2 rounded-full bg-mint px-4 py-2 text-sm font-semibold text-white hover:bg-[#6FA897]"
+                    >
+                      <CheckCircle2 className="h-4 w-4" /> View order status
+                    </button>
                   ) : (
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-500">Total due</p>
-                        <p className="text-xl font-semibold text-charcoal">${total.toFixed(2)}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
-                          onClick={handleClose}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="button"
-                          disabled={loading || !hasItems}
-                          className="flex items-center gap-2 rounded-full bg-mint px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6FA897] disabled:bg-gray-300"
-                          onClick={() => {
-                            if (activeStep < steps.length - 1) {
-                              setActiveStep((prev) => prev + 1);
-                            } else {
-                              handleSubmit();
-                            }
-                          }}
-                        >
-                          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Continue'}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  {!hasItems && activeStep < steps.length && (
-                    <p className="mt-2 text-xs text-red-500">Add at least one product to continue to checkout.</p>
-                  )}
-                  {orderId && (
-                    <p className="mt-2 text-xs text-gray-500">
-                      Order #{orderId} created. A confirmation email has been sent to {form.email || 'your inbox'}.
-                    </p>
+                    <button
+                      type="button"
+                      disabled={!hasItems || loading || !canAdvance()}
+                      onClick={() => {
+                        if (activeStep === steps.length - 1) {
+                          handleSubmit();
+                        } else {
+                          setActiveStep((prev) => prev + 1);
+                        }
+                      }}
+                      className="inline-flex items-center gap-2 rounded-full bg-lavender px-4 py-2 text-sm font-semibold text-white hover:bg-[#a696dd] disabled:opacity-50"
+                    >
+                      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                      {activeStep === steps.length - 1 ? 'Place order' : 'Continue'}
+                    </button>
                   )}
                 </div>
               </Dialog.Panel>

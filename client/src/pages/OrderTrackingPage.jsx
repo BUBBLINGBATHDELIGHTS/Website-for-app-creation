@@ -51,10 +51,10 @@ export default function OrderTrackingPage() {
         <section className="rounded-3xl bg-white p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-charcoal">Delivery progress</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            {data.timeline.map((milestone) => (
-              <div key={milestone.status} className="rounded-2xl border border-gray-100 p-4">
+            {(data.timeline ?? []).map((milestone) => (
+              <div key={milestone.status + milestone.timestamp} className="rounded-2xl border border-gray-100 p-4">
                 <p className="text-xs uppercase tracking-wide text-gray-400">{milestone.status}</p>
-                <p className="mt-2 text-sm font-semibold text-charcoal">{milestone.description}</p>
+                <p className="mt-2 text-sm font-semibold text-charcoal">{milestone.description || 'Status update'}</p>
                 <p className="mt-2 text-xs text-gray-500">
                   {new Date(milestone.timestamp).toLocaleString()}
                 </p>
@@ -82,12 +82,9 @@ export default function OrderTrackingPage() {
           <div className="mt-4 space-y-4">
             {data.items.map((item) => (
               <div key={item.id} className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-3">
-                  <img src={item.imageUrl} alt={item.name} className="h-12 w-12 rounded-xl object-cover" />
-                  <div>
-                    <p className="font-medium text-charcoal">{item.name}</p>
-                    <p className="text-gray-500">Qty {item.quantity}</p>
-                  </div>
+                <div>
+                  <p className="font-medium text-charcoal">{item.name}</p>
+                  <p className="text-gray-500">Qty {item.quantity}</p>
                 </div>
                 <p className="font-semibold text-charcoal">${(item.price * item.quantity).toFixed(2)}</p>
               </div>
@@ -107,25 +104,23 @@ export default function OrderTrackingPage() {
           </div>
         </section>
 
-        <section className="rounded-3xl bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-charcoal">Fulfillment</h2>
-          <div className="mt-4 flex flex-col gap-4">
-            <div className="flex items-center gap-4 rounded-2xl border border-gray-100 p-4">
-              <Truck className="h-6 w-6 text-mint" />
-              <div>
-                <p className="font-medium text-charcoal">Carrier</p>
-                <p className="text-sm text-gray-500">{data.fulfillment.carrier}</p>
-              </div>
+        {data.shipments?.length ? (
+          <section className="rounded-3xl bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-charcoal">Fulfillment</h2>
+            <div className="mt-4 flex flex-col gap-4">
+              {data.shipments.map((shipment) => (
+                <div key={shipment.trackingNumber} className="flex items-center gap-4 rounded-2xl border border-gray-100 p-4">
+                  <Truck className="h-6 w-6 text-mint" />
+                  <div>
+                    <p className="font-medium text-charcoal">{shipment.carrier}</p>
+                    <p className="text-sm text-gray-500">Tracking {shipment.trackingNumber}</p>
+                    <p className="text-xs text-gray-400">Status: {shipment.status}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="flex items-center gap-4 rounded-2xl border border-gray-100 p-4">
-              <PackageCheck className="h-6 w-6 text-lavender" />
-              <div>
-                <p className="font-medium text-charcoal">Tracking number</p>
-                <p className="text-sm text-gray-500">{data.fulfillment.trackingNumber}</p>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
       </div>
     </div>
   );

@@ -9,6 +9,11 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
+  const previewCode = import.meta.env.VITE_PREVIEW_ACCESS_CODE;
+  if (previewCode) {
+    config.headers['X-Preview-Token'] = previewCode;
+  }
+
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
 

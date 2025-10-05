@@ -8,7 +8,8 @@ export default function CartDrawer({ open, onClose, onCheckout }) {
   const subtotal = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discountRate = state.discounts.reduce((sum, discount) => sum + (discount.amount || 0), 0);
   const discount = subtotal * discountRate;
-  const total = subtotal - discount;
+  const loyaltyDiscount = state.customer?.hasAccount ? subtotal * 0.1 : 0;
+  const total = subtotal - discount - loyaltyDiscount;
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -119,9 +120,15 @@ export default function CartDrawer({ open, onClose, onCheckout }) {
                           <span>- ${discount.toFixed(2)}</span>
                         </div>
                       )}
+                      {loyaltyDiscount > 0 && (
+                        <div className="flex items-center justify-between text-sm text-mint">
+                          <span>Loyalty 10% off</span>
+                          <span>- ${loyaltyDiscount.toFixed(2)}</span>
+                        </div>
+                      )}
                       <div className="flex items-center justify-between font-semibold text-charcoal">
                         <span>Total</span>
-                        <span>${total.toFixed(2)}</span>
+                        <span>${Math.max(0, total).toFixed(2)}</span>
                       </div>
                       <button
                         type="button"

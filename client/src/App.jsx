@@ -5,6 +5,9 @@ import ShopPage from './pages/ShopPage.jsx';
 import AdminPage from './pages/AdminPage.jsx';
 import OrderTrackingPage from './pages/OrderTrackingPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
+import ProductDetailPage from './pages/ProductDetailPage.jsx';
+import EmployeeDashboardPage from './pages/EmployeeDashboardPage.jsx';
+import WishlistPage from './pages/WishlistPage.jsx';
 import { useCart } from './context/CartContext.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import CartDrawer from './components/CartDrawer.jsx';
@@ -47,8 +50,25 @@ export default function App() {
               </RequireAdmin>
             }
           />
+          <Route path="/products/:productId" element={<ProductDetailPage />} />
           <Route path="/orders/:orderId" element={<OrderTrackingPage />} />
+          <Route
+            path="/employee"
+            element={
+              <RequireAdmin allowedRoles={['employee', 'admin']}>
+                <EmployeeDashboardPage />
+              </RequireAdmin>
+            }
+          />
           <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/wishlist"
+            element={
+              <RequireAdmin allowedRoles={['customer', 'admin']}>
+                <WishlistPage />
+              </RequireAdmin>
+            }
+          />
         </Routes>
       </div>
 
@@ -88,6 +108,28 @@ export default function App() {
             )}
             <span className="text-xs mt-1">Cart</span>
           </button>
+          {role === 'customer' || role === 'admin' ? (
+            <Link
+              to="/wishlist"
+              className="flex flex-col items-center py-2 px-4 transition-colors text-gray-500 hover:text-mint"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-heart"
+              >
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+              </svg>
+              <span className="text-xs mt-1">Wishlist</span>
+            </Link>
+          ) : null}
           {role === 'admin' ? (
             <Link
               to="/admin"
@@ -109,6 +151,28 @@ export default function App() {
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
               <span className="text-xs mt-1">Admin</span>
+            </Link>
+          ) : role === 'employee' ? (
+            <Link
+              to="/employee"
+              className="flex flex-col items-center py-2 px-4 transition-colors text-gray-500 hover:text-mint"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-badge-check"
+              >
+                <path d="M7.5 4.21 12 2l4.5 2.21 4 3.58-1 4.95 1 4.95-4 3.58L12 22l-4.5-2.21-4-3.58 1-4.95-1-4.95z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+              <span className="text-xs mt-1">Fulfillment</span>
             </Link>
           ) : (
             <Link
