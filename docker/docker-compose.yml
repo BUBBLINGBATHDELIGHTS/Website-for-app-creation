@@ -1,0 +1,21 @@
+version: '3.9'
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - redis
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'

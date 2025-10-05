@@ -1,13 +1,15 @@
 node_modules/
-dist/
-build/
+.next/
+out/
 .env
 .env.*
 !**/.env.example
 .DS_Store
 npm-debug.log*
 .vscode/
-client/node_modules/
-server/node_modules/
-client/dist/
-server/dist/
+
+# Turborepo cache
+.turbo/
+
+# Docker artifacts
+docker/*.log

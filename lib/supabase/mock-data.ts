@@ -1,0 +1,32 @@
+export const demoProducts = [
+  {
+    id: 'lavender-orbit',
+    name: 'Lavender Orbit Bath Bomb',
+    price: 28,
+    status: 'active',
+    hero_image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80',
+    tags: ['calm', 'floral', 'evening'],
+    rating: 4.9,
+    review_count: 286,
+  },
+  {
+    id: 'eucalyptus-echo',
+    name: 'Eucalyptus Echo Soap',
+    price: 18,
+    status: 'active',
+    hero_image: 'https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=900&q=80',
+    tags: ['invigorating', 'mint', 'morning'],
+    rating: 4.7,
+    review_count: 194,
+  },
+  {
+    id: 'vanilla-moon',
+    name: 'Vanilla Moon Candle',
+    price: 42,
+    status: 'active',
+    hero_image: 'https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?auto=format&fit=crop&w=900&q=80',
+    tags: ['comfort', 'vanilla', 'night'],
+    rating: 4.8,
+    review_count: 152,
+  },
+];
