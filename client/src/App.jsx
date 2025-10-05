@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { LogOut, ShoppingCart } from 'lucide-react';
+import { LogOut, Palette, ShoppingCart } from 'lucide-react';
 import ShopPage from './pages/ShopPage.jsx';
 import AdminPage from './pages/AdminPage.jsx';
 import OrderTrackingPage from './pages/OrderTrackingPage.jsx';
@@ -9,6 +9,7 @@ import ProductDetailPage from './pages/ProductDetailPage.jsx';
 import EmployeeDashboardPage from './pages/EmployeeDashboardPage.jsx';
 import WishlistPage from './pages/WishlistPage.jsx';
 import WorkingWithBubblesPage from './pages/WorkingWithBubblesPage.jsx';
+import CustomizePage from './pages/CustomizePage.jsx';
 import { useCart } from './context/CartContext.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import { useWorkspaceAccess } from './context/WorkspaceAccessContext.jsx';
@@ -42,10 +43,11 @@ export default function App() {
             element={
               <ShopPage
                 onOpenCart={() => setCartOpen(true)}
-                onOpenCheckout={() => setCheckoutOpen(true)}
+                onStartCustomizing={() => navigate('/customize')}
               />
             }
           />
+          <Route path="/customize" element={<CustomizePage />} />
           <Route
             path="/admin"
             element={
@@ -103,6 +105,13 @@ export default function App() {
               <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             </svg>
             <span className="text-xs mt-1">Home</span>
+          </Link>
+          <Link
+            to="/customize"
+            className="flex flex-col items-center py-2 px-4 transition-colors text-gray-500 hover:text-mint"
+          >
+            <Palette className="h-6 w-6" />
+            <span className="text-xs mt-1">Customize</span>
           </Link>
           <button
             type="button"

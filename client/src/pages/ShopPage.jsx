@@ -35,7 +35,7 @@ function useProducts(filters) {
   });
 }
 
-export default function ShopPage({ onOpenCart, onOpenCheckout }) {
+export default function ShopPage({ onOpenCart, onStartCustomizing }) {
   const { dispatch, state } = useCart();
   const { role } = useAuth();
   const { items: wishlistItems, add: addToWishlist, remove: removeFromWishlist } = useWishlist();
@@ -136,7 +136,7 @@ export default function ShopPage({ onOpenCart, onOpenCheckout }) {
             <p className="text-white/90 mb-4">Handcrafted luxury meets playful fizz</p>
             <button
               type="button"
-              onClick={onOpenCheckout}
+              onClick={onStartCustomizing}
               className="bg-white text-lavender px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
             >
               Start Customizing

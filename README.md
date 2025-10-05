@@ -117,6 +117,7 @@ Sign in with a Supabase Auth user whose `app_metadata.role` (or `user_metadata.r
 ## Feature summary
 
 - **Catalogue browsing** – Filter, search, sort, and paginate the live product listing. Related items appear on product detail pages, and reviews are powered by Supabase-backed submissions.
+- **Custom ritual builder** – A Framer Motion + Zustand experience at `/customize` lets shoppers compose bases, scents, and finishers while the UI adapts to their desired mood.
 - **Wishlist + reviews** – Logged-in customers can heart products, manage their wishlist, and leave product feedback. Wishlists persist in Postgres.
 - **Checkout** – Guest checkout remains available while offering an optional account creation that automatically applies a 10% loyalty discount, collects marketing consent, and triggers Supabase account provisioning.
 - **Order tracking** – Customers can revisit `/orders/:id` to see shipment status, discounts applied, and a fulfillment timeline updated by your staff.

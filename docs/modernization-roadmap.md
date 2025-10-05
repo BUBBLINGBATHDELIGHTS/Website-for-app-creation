@@ -126,3 +126,76 @@ If the team anticipates heavy schematics usage, granular dependency constraints,
 ---
 
 By executing these three tracks, the team lays the groundwork for the advanced roadmap items (Supabase RLS, vector search, autonomous agents, Kubernetes) without blocking day-to-day development. Each track can proceed in parallel, with Dockerisation unblocking infrastructure, TypeScript improving safety, and Turborepo delivering faster feedback loops.
+
+---
+
+## 4. Intelligent data layer upgrades
+
+### Row-Level Security & policies
+- Model access patterns first: shoppers, loyalty members, employees, admins, and AI agents have different read/write needs.
+- Enable Supabase RLS on the `orders`, `customers`, `inventory`, `workspace_sessions`, and `ai_events` tables.
+- Write policies that pair JWT claims (`role`, `workspace_id`) with relational checks. Example: customers can select orders where `orders.customer_id = auth.uid()`, employees can update orders scoped to `orders.assigned_workspace = auth.jwt()->>'workspace'`.
+- Ship a policy test harness (`npm run --workspace server test:policies`) that calls Supabase edge functions with signed JWTs representing each persona. Automate via CI so regressions surface quickly.
+
+### Supabase Edge Functions
+- Offload analytics, fraud scoring, and email orchestration to Edge Functions triggered via database webhooks.
+- Build reusable modules:
+  1. `orders-on-insert` → enrich order with AI-derived sentiment, dispatch confirmation email.
+  2. `orders-on-status-change` → evaluate fraud risk via third-party APIs, update `risk_events` table.
+  3. `daily-cohort-report` (scheduled) → aggregate retention data and push to the AI insights service.
+- Treat Edge Functions as deployable microservices; maintain TypeScript definitions and integrate with Turborepo pipelines so they share models with the main server.
+
+### Recurrent AI insights
+- Stand up a nightly job that streams product, order, and support signals into the AI service.
+- Train or fine-tune embedding models to cluster products by sentiment, season, and attachment rate.
+- Publish insights back to Supabase (`ai_recommendations` table) with metadata (confidence, recommended action) so the admin UI and autonomous agent interface can consume them.
+- Expose dashboards in the admin portal that surface these insights alongside manual overrides and audit trails.
+
+---
+
+## 5. Emotionally responsive experience
+
+### Real-time recommendation engine
+- Generate product embeddings using OpenAI or in-house models, blending catalogue data with user behaviour, reviews, and wishlist interactions.
+- Store embeddings in Supabase pgvector; query similar vectors for personalised carousels, cart cross-sells, and customize-page suggestions.
+- Cache recommendations per session using Redis or Supabase Cache to minimise latency while keeping experiences fresh.
+
+### Adaptive UI with Framer Motion & Zustand
+- Use Zustand stores (introduced with the customisation workspace) to persist session mood, preferred intensity, and loyalty milestones.
+- Drive Framer Motion animations from emotional context: highlight calm palettes for stressed users, energised animations for repeat purchases.
+- Implement consent-driven browser sensing (e.g., prefers-reduced-motion, ambient light) to tune animation density and contrast.
+
+### Coherence dashboard
+- Extend the admin analytics area with a coherence dashboard: sentiment trend lines, drop-off funnels, and loyalty progression.
+- Overlay AI suggestions (“extend flash sale”, “introduce calmer copy”) with one-click approval that triggers the AI assistant.
+- Track experiment outcomes to feed future AI recommendations.
+
+---
+
+## 6. Security, scalability, and observability
+
+### Kubernetes deployment
+- Package each service (client, server, ai-service, edge worker proxy) as a container and deploy via Helm or Terraform.
+- Use Horizontal Pod Autoscalers to scale the AI service on CPU/GPU utilisation, and configure PodDisruptionBudgets to avoid downtime during rollouts.
+- Integrate secrets managers (Google Secret Manager or Doppler) for OpenAI, Supabase, and Stripe credentials.
+
+### Zero-trust mesh
+- Issue short-lived JWTs for cross-service calls; rotate signing keys via Supabase Key Management.
+- Enforce mTLS between pods using service mesh tooling (Linkerd or Istio) and audit logs for each inter-service request.
+- Run automated penetration tests in CI and block deployments if critical vulnerabilities remain open.
+
+### Telemetry & alerts
+- Instrument the client, server, and AI service with OpenTelemetry SDKs. Forward traces and metrics to Grafana Cloud or self-hosted Grafana/Tempo/Loki stacks.
+- Define golden signals (latency, error rate, saturation) and configure alerting policies that page the on-call team and notify the AI agent for auto-remediation suggestions.
+- Capture AI decision logs for compliance; store them for at least 13 months.
+
+---
+
+## 7. Phased transformation roadmap
+
+1. **Foundation (Weeks 1-6)** – Complete the TypeScript migration, Docker rollout, Turborepo adoption, and baseline Kubernetes deployment with CI/CD.
+2. **Intelligence (Weeks 4-10)** – Layer in RLS, Edge Functions, recommendation embeddings, and the autonomous admin agent MVP.
+3. **Experience (Weeks 8-14)** – Ship the emotionally responsive UI, coherence dashboard, and advanced personalisation experiments.
+4. **Optimisation (Weeks 12+)** – Establish performance budgets, iterate on AI models, and continuously tune infrastructure autoscaling and observability.
+
+Each phase overlaps slightly so learnings feed forward while maintaining a shippable product at the end of every milestone.
