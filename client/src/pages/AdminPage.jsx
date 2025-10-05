@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClipboardList, Package, Percent, PlusCircle, BarChart } from 'lucide-react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import api from '../api/client.js';
+import AdminAiWorkbench from '../components/AdminAiWorkbench.jsx';
 
 function useAdminData() {
   const overview = useQuery({
@@ -355,6 +356,8 @@ export default function AdminPage() {
             </div>
           </div>
         </section>
+
+        <AdminAiWorkbench />
       </main>
     </div>
   );

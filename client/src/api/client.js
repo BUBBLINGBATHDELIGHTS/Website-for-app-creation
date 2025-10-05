@@ -14,6 +14,23 @@ api.interceptors.request.use(async (config) => {
     config.headers['X-Preview-Token'] = previewCode;
   }
 
+  if (typeof window !== 'undefined') {
+    try {
+      const workspaceTicket = window.sessionStorage.getItem('bubbles-workspace-access');
+      if (workspaceTicket) {
+        const parsed = JSON.parse(workspaceTicket);
+        if (parsed?.registration?.email) {
+          config.headers['X-Workspace-Email'] = parsed.registration.email;
+        }
+        if (parsed?.registration?.role) {
+          config.headers['X-Workspace-Role'] = parsed.registration.role;
+        }
+      }
+    } catch (error) {
+      console.warn('Unable to attach workspace headers', error);
+    }
+  }
+
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
 

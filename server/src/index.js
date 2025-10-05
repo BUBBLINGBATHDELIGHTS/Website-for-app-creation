@@ -10,6 +10,8 @@ import paymentsRouter from './routes/payments.js';
 import wishlistRouter from './routes/wishlist.js';
 import employeesRouter from './routes/employees.js';
 import adminRouter from './routes/admin.js';
+import accessRouter from './routes/access.js';
+import { requireWorkspaceIdentity } from './middleware/workspace.js';
 import { ensureDatabase, closeDb } from './lib/database.js';
 
 dotenv.config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' });
@@ -54,8 +56,9 @@ app.use('/api/products', productsRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/payments', paymentsRouter);
 app.use('/api/wishlist', wishlistRouter);
-app.use('/api/employees', employeesRouter);
-app.use('/api/admin', adminRouter);
+app.use('/api/access', accessRouter);
+app.use('/api/employees', requireWorkspaceIdentity({ allowedRoles: ['employee', 'admin'] }), employeesRouter);
+app.use('/api/admin', requireWorkspaceIdentity({ allowedRoles: ['admin'] }), adminRouter);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

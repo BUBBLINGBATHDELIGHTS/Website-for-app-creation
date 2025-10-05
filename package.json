@@ -10,6 +10,7 @@
     "install:all": "npm install --workspaces",
     "dev:client": "npm --workspace client run dev",
     "dev:server": "npm --workspace server run dev",
+    "dev:ai": "uvicorn ai-service.main:app --reload",
     "build": "npm --workspace client run build",
     "lint": "npm --workspace client run lint",
     "migrate": "npm --workspace server run migrate"

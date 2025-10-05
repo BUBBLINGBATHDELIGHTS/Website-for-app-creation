@@ -8,16 +8,20 @@ import LoginPage from './pages/LoginPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage.jsx';
 import EmployeeDashboardPage from './pages/EmployeeDashboardPage.jsx';
 import WishlistPage from './pages/WishlistPage.jsx';
+import WorkingWithBubblesPage from './pages/WorkingWithBubblesPage.jsx';
 import { useCart } from './context/CartContext.jsx';
 import { useAuth } from './context/AuthContext.jsx';
+import { useWorkspaceAccess } from './context/WorkspaceAccessContext.jsx';
 import CartDrawer from './components/CartDrawer.jsx';
 import CheckoutFlow from './components/CheckoutFlow.jsx';
 import RequireAdmin from './components/RequireAdmin.jsx';
+import RequireWorkspaceAccess from './components/RequireWorkspaceAccess.jsx';
 import supabase from './lib/supabaseClient.js';
 
 export default function App() {
   const { state } = useCart();
   const { role, user } = useAuth();
+  const { hasAccess } = useWorkspaceAccess();
   const navigate = useNavigate();
   const [isCartOpen, setCartOpen] = useState(false);
   const [isCheckoutOpen, setCheckoutOpen] = useState(false);
@@ -45,9 +49,11 @@ export default function App() {
           <Route
             path="/admin"
             element={
-              <RequireAdmin>
-                <AdminPage />
-              </RequireAdmin>
+              <RequireWorkspaceAccess>
+                <RequireAdmin>
+                  <AdminPage />
+                </RequireAdmin>
+              </RequireWorkspaceAccess>
             }
           />
           <Route path="/products/:productId" element={<ProductDetailPage />} />
@@ -55,12 +61,15 @@ export default function App() {
           <Route
             path="/employee"
             element={
-              <RequireAdmin allowedRoles={['employee', 'admin']}>
-                <EmployeeDashboardPage />
-              </RequireAdmin>
+              <RequireWorkspaceAccess>
+                <RequireAdmin allowedRoles={['employee', 'admin']}>
+                  <EmployeeDashboardPage />
+                </RequireAdmin>
+              </RequireWorkspaceAccess>
             }
           />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/work-with-bubbles" element={<WorkingWithBubblesPage />} />
           <Route
             path="/wishlist"
             element={
@@ -173,6 +182,28 @@ export default function App() {
                 <path d="m9 12 2 2 4-4"></path>
               </svg>
               <span className="text-xs mt-1">Fulfillment</span>
+            </Link>
+          ) : hasAccess ? (
+            <Link
+              to="/work-with-bubbles"
+              className="flex flex-col items-center py-2 px-4 transition-colors text-gray-500 hover:text-mint"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-shield-check"
+              >
+                <path d="M9 12l2 2 4-4" />
+                <path d="M7.4 2.27a2 2 0 0 0-1.39 1.9v5.4c0 5.3 3.25 10.12 8 11.73 4.75-1.6 8-6.42 8-11.73v-5.4a2 2 0 0 0-1.39-1.9l-6-2.18a2 2 0 0 0-1.22 0z" />
+              </svg>
+              <span className="text-xs mt-1">Workspace</span>
             </Link>
           ) : (
             <Link

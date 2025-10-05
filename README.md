@@ -18,6 +18,7 @@ A full-stack e-commerce platform for artisanal bath and body products. The React
 │       ├── lib         # Database bootstrap, caching, Supabase service client, mailer
 │       ├── middleware  # Supabase JWT auth helpers
 │       └── routes      # Products, orders, wishlist, employees, admin, payments
+├── ai-service          # FastAPI service that wraps OpenAI for AI-assisted tooling
 ├── package.json        # Workspace configuration
 └── README.md
 ```
@@ -26,6 +27,7 @@ A full-stack e-commerce platform for artisanal bath and body products. The React
 
 - Node.js 18+
 - npm 8+
+- Python 3.11+
 - A Supabase project with Postgres enabled
 - (Optional) SMTP credentials for transactional email (order confirmations)
 
@@ -38,6 +40,7 @@ VITE_API_URL=https://api.yourdomain.com/api
 VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 VITE_SUPABASE_ANON_KEY=public-anon-key
 VITE_PREVIEW_ACCESS_CODE=staging-preview-code
+VITE_AI_SERVICE_URL=https://ai.yourdomain.com
 ```
 
 > `VITE_PREVIEW_ACCESS_CODE` hides the storefront behind an access prompt while you iterate. Leave it blank to disable the preview gate.
@@ -58,9 +61,22 @@ PGSSLMODE=require
 # SMTP_FROM=orders@bubblingbathdelights.com
 MAINTENANCE_MODE=true
 PREVIEW_ACCESS_TOKEN=staging-preview-code
+# Optional: ensure every admin/employee request presents a verified email header
+# WORKSPACE_ACCESS_EMAIL_DOMAIN=bubblingbathdelights.com
 ```
 
 > The API enforces `MAINTENANCE_MODE` when set to `true`, requiring requests to include `X-Preview-Token`. The client automatically supplies the value from `VITE_PREVIEW_ACCESS_CODE` so that your staging deployment stays private.
+
+### AI service (`ai-service/.env`)
+
+```
+OPENAI_API_KEY=sk-your-openai-key
+OPENAI_MODEL=gpt-4.1-mini
+OPENAI_ORG=
+AI_ALLOWED_ORIGINS=https://bubblingbathdelights.com,https://admin.bubblingbathdelights.com
+```
+
+> The AI microservice falls back to curated copy whenever the OpenAI key is absent so you can continue QA without external calls.
 
 ## Setup
 
@@ -102,19 +118,29 @@ Sign in with a Supabase Auth user whose `app_metadata.role` (or `user_metadata.r
 - **Admin console** – Admins manage categories, inventory, customers, discounts, and see revenue analytics with a 14-day sales chart.
 - **Email notifications** – Order status updates and confirmations are delivered via SMTP when configured, otherwise logged to the console for local development.
 - **Performance** – API responses for catalogue and categories are cached with an in-memory LRU store. The preview gate and maintenance mode keep staging deployments private until launch.
+- **AI workbench** – The admin console now embeds OpenAI-powered product copy, seasonal planning, engineering assistant, and optimization recommendations backed by the new FastAPI microservice.
+
+## Workspace access & security
+
+- Team members visit `/work-with-bubbles` to verify their work email, request access approval, and unlock the protected admin/employee portals.
+- The client stores the approved workspace ticket in `sessionStorage` and attaches it to API calls through `X-Workspace-Email`/`X-Workspace-Role` headers.
+- `server/src/middleware/workspace.js` verifies each request against the `workspace_registrations` table before delegating to Supabase role checks, ensuring the portals stay hidden from unauthorised users.
+- Admins manage registrations directly in the database (approve/revoke) or extend the API to automate approvals as required.
 
 ## Deployment checklist
 
 | Target   | Platform suggestion | Required env vars |
 |----------|---------------------|-------------------|
-| Frontend | Vercel (Static)     | `VITE_API_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, optional `VITE_PREVIEW_ACCESS_CODE` |
+| Frontend | Vercel (Static)     | `VITE_API_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, optional `VITE_PREVIEW_ACCESS_CODE`, `VITE_AI_SERVICE_URL` |
 | Backend  | Render/Railway/Fly  | `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `PGSSLMODE=require`, optional `CLIENT_ORIGIN`, optional `STRIPE_SECRET_KEY`, optional SMTP vars, `MAINTENANCE_MODE`, `PREVIEW_ACCESS_TOKEN` |
+| AI svc   | Railway/Fly/Render  | `OPENAI_API_KEY`, optional `OPENAI_MODEL`, `AI_ALLOWED_ORIGINS` |
 
 1. **Backend** – Deploy `server/` and point `DATABASE_URL` at Supabase. Run `npm run migrate` once per environment.
-2. **Frontend** – Deploy `client/` to Vercel. Mirror the client env vars and set `VITE_API_URL` to the backend’s public `/api` base (e.g. `https://api.yourdomain.com/api`).
-3. **Domain** – Map `yourdomain.com` to Vercel and `api.yourdomain.com` to the backend host.
-4. **Supabase roles** – Create Auth users and set `app_metadata.role` (or `user_metadata.role`) to one of `customer`, `employee`, or `admin` depending on the level of access you want to grant.
-5. **Email** – Populate the SMTP variables to deliver real order confirmations; otherwise messages log to stdout for testing.
+2. **AI service** – Deploy `ai-service/` (e.g. `uvicorn main:app`). Provide the OpenAI credentials and the production origins so CORS remains strict.
+3. **Frontend** – Deploy `client/` to Vercel. Mirror the client env vars, including `VITE_AI_SERVICE_URL`, and set `VITE_API_URL` to the backend’s public `/api` base (e.g. `https://api.yourdomain.com/api`).
+4. **Domain** – Map `yourdomain.com` to Vercel, `api.yourdomain.com` to the backend, and `ai.yourdomain.com` (or similar) to the AI microservice.
+5. **Supabase roles & workspace approvals** – Create Auth users and set `app_metadata.role` (or `user_metadata.role`) appropriately. Approve their email in the `workspace_registrations` table (via SQL editor or future admin UI) so the workspace middleware accepts requests.
+6. **Email** – Populate the SMTP variables to deliver real order confirmations; otherwise messages log to stdout for testing.
 
 ## API overview
 
@@ -135,6 +161,8 @@ Sign in with a Supabase Auth user whose `app_metadata.role` (or `user_metadata.r
 | GET    | `/api/admin/*`                  | Admin inventory, orders, customers, discounts, analytics |
 | POST   | `/api/admin/discounts`          | Create discount codes (admin only) |
 | POST   | `/api/payments/intent`          | Optional Stripe payment intent helper |
+| POST   | `/api/access/validate`          | Verify admin/employee workspace access |
+| POST   | `/api/access/registrations`     | Submit or update workspace access requests |
 
 ## Notes
 
@@ -142,3 +170,12 @@ Sign in with a Supabase Auth user whose `app_metadata.role` (or `user_metadata.r
 - Knex manages schema changes; rerun the migration script whenever you update server-side tables.
 - Email delivery is simulated when SMTP variables are omitted, making development safe while preserving code paths.
 - The storefront remains mobile responsive thanks to Tailwind utilities that mirror the original layout.
+- AI tooling is optional in local development; point `VITE_AI_SERVICE_URL` at `http://localhost:8000` and start the FastAPI server with `uvicorn main:app --reload` when you want the workbench live.
+
+## Testing & refinement roadmap
+
+1. **Unit smoke tests** – Run `npm run lint` and add Vitest suites for reducers and API helpers. For the AI service, add pytest cases that mock OpenAI responses.
+2. **Integration tests** – Exercise the admin and employee flows with Playwright using a seeded Supabase dataset plus mocked AI responses.
+3. **Load testing** – Replay peak catalogue traffic against `/api/products` and `/ai/products/generate` using k6 to confirm caching and rate limiting strategies.
+4. **Security review** – Audit the workspace headers and Supabase role checks. Consider adding expirations to workspace tickets and rate limiting to the access endpoints.
+5. **Observability** – Ship structured logs and metrics (e.g. OpenTelemetry) from both Node and FastAPI services to monitor AI latency, error rates, and portal usage.

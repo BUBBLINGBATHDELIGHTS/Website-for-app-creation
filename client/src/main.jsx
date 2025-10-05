@@ -7,6 +7,7 @@ import './styles.css';
 import { CartProvider } from './context/CartContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { WishlistProvider } from './context/WishlistContext.jsx';
+import { WorkspaceAccessProvider } from './context/WorkspaceAccessContext.jsx';
 import PreviewGate from './components/PreviewGate.jsx';
 
 const queryClient = new QueryClient();
@@ -15,15 +16,17 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <BrowserRouter>
-              <PreviewGate>
-                <App />
-              </PreviewGate>
-            </BrowserRouter>
-          </WishlistProvider>
-        </CartProvider>
+        <WorkspaceAccessProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <BrowserRouter>
+                <PreviewGate>
+                  <App />
+                </PreviewGate>
+              </BrowserRouter>
+            </WishlistProvider>
+          </CartProvider>
+        </WorkspaceAccessProvider>
       </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>
