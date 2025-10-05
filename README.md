@@ -187,6 +187,7 @@ Sign in with a Supabase Auth user whose `app_metadata.role` (or `user_metadata.r
 4. **Security review** – Audit the workspace headers and Supabase role checks. Consider adding expirations to workspace tickets and rate limiting to the access endpoints.
 5. **Observability** – Ship structured logs and metrics (e.g. OpenTelemetry) from both Node and FastAPI services to monitor AI latency, error rates, and portal usage.
 
-## Modernization roadmap
+## Strategic roadmaps
 
-A detailed implementation plan for Dockerising the platform, migrating both workspaces to TypeScript, and introducing Turborepo lives in [`docs/modernization-roadmap.md`](docs/modernization-roadmap.md). Use it as the starting point for the structural, security, and scalability upgrades requested in the latest roadmap.
+- [`docs/modernization-roadmap.md`](docs/modernization-roadmap.md) documents the structural upgrades (Docker, TypeScript, Turborepo), intelligent data layer, emotionally responsive UX, and security roadmap.
+- [`docs/decentralized-identity-roadmap.md`](docs/decentralized-identity-roadmap.md) expands on decentralized identity, privacy-preserving analytics, and continuous experimentation initiatives so the platform can lead the industry in trust and innovation.

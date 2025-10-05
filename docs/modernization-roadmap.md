@@ -191,7 +191,19 @@ By executing these three tracks, the team lays the groundwork for the advanced r
 
 ---
 
-## 7. Phased transformation roadmap
+## 7. Decentralized identity, privacy, and experimentation
+
+The leadership team requested a deeper exploration of self-sovereign identity (SSI), privacy-preserving analytics, and a culture of rapid experimentation. Refer to [`docs/decentralized-identity-roadmap.md`](./decentralized-identity-roadmap.md) for a detailed action plan. The headline themes are:
+
+- **Portable trust** – Introduce DIDs and verifiable credentials so shoppers, admins, employees, and partners control their identity proofs while unlocking frictionless access across portals.
+- **Privacy by design** – Combine homomorphic encryption, secure multi-party computation, and differential privacy so AI insights and experimentation respect regulatory requirements (GDPR, CCPA) and shopper expectations.
+- **Continuous innovation** – Invest in hack weeks, academic partnerships, and feature-flagged experiments that keep the platform on the cutting edge without compromising zero-trust guardrails.
+
+Synchronise this track with the TypeScript and Kubernetes work so shared libraries (credential schemas, consent APIs) benefit from the new monorepo tooling.
+
+---
+
+## 8. Phased transformation roadmap
 
 1. **Foundation (Weeks 1-6)** – Complete the TypeScript migration, Docker rollout, Turborepo adoption, and baseline Kubernetes deployment with CI/CD.
 2. **Intelligence (Weeks 4-10)** – Layer in RLS, Edge Functions, recommendation embeddings, and the autonomous admin agent MVP.
