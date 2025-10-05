@@ -1,0 +1,36 @@
+# syntax=docker/dockerfile:1.5
+
+# Build the Vite storefront and serve via Nginx
+FROM node:20-alpine AS deps
+WORKDIR /app
+
+# Copy workspace manifests so npm can resolve dependencies.
+COPY package.json package-lock.json* ./
+COPY client/package.json client/package-lock.json* ./client/
+COPY .npmrc* ./
+
+# Install only the client workspace dependencies.
+RUN npm install --workspaces --workspace client --include-workspace-root=false
+
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# Reuse node_modules from the deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/client/node_modules ./client/node_modules
+
+# Copy the rest of the repository for the build (filtered by .dockerignore if present)
+COPY . .
+
+# Build the static assets. When the TypeScript migration lands, the build script
+# should compile the TS sources prior to Vite bundling.
+RUN npm run --workspace client build
+
+FROM nginx:1.27-alpine AS runner
+COPY --from=builder /app/client/dist /usr/share/nginx/html
+
+# Provide a default Nginx config optimised for SPA routing.
+COPY ops/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

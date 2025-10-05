@@ -185,3 +185,7 @@ Sign in with a Supabase Auth user whose `app_metadata.role` (or `user_metadata.r
 3. **Load testing** – Replay peak catalogue traffic against `/api/products` and `/ai/products/generate` using k6 to confirm caching and rate limiting strategies.
 4. **Security review** – Audit the workspace headers and Supabase role checks. Consider adding expirations to workspace tickets and rate limiting to the access endpoints.
 5. **Observability** – Ship structured logs and metrics (e.g. OpenTelemetry) from both Node and FastAPI services to monitor AI latency, error rates, and portal usage.
+
+## Modernization roadmap
+
+A detailed implementation plan for Dockerising the platform, migrating both workspaces to TypeScript, and introducing Turborepo lives in [`docs/modernization-roadmap.md`](docs/modernization-roadmap.md). Use it as the starting point for the structural, security, and scalability upgrades requested in the latest roadmap.
