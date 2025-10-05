@@ -86,6 +86,12 @@ Install all workspaces from the repository root:
 npm install
 ```
 
+> **Note on restricted environments:** if your network blocks access to scoped packages (for example `@headlessui/react`) the
+> install command will fail with `403 Forbidden`. The repo ships with a `.npmrc` that points to `https://registry.npmmirror.com/` to help in
+> corporate or sandboxed environments—adjust the registry if your policy requires a different mirror. Alternatively, download the dependency
+> tarballs on a machine with public internet access and place them into a private Verdaccio / npm proxy that your environment can reach. Once
+> the registry issue is resolved, rerun `npm install` to generate the workspace `package-lock.json` files.
+
 Run database migrations (creates and updates customers, products, categories, reviews, wishlists, discounts, employees, orders, shipments, and supporting tables):
 
 ```bash
