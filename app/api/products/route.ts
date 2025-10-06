@@ -1,17 +1,23 @@
+// app/api/products/route.ts
+export const runtime = 'nodejs';
+export const revalidate = 60;
+
 import { NextResponse } from 'next/server';
 import { getOrSet } from '@/lib/utils/cache';
 import { optimizedProductQueries } from '@/lib/supabase/optimized-queries';
 
-export const runtime = 'edge';
-export const revalidate = 60;
-
+/**
+ * Handles GET requests for fetching product data.
+ * Utilizes caching and Supabase optimization under Node.js runtime.
+ */
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const params = Object.fromEntries(searchParams.entries());
-
-  const products = await getOrSet(`products:${JSON.stringify(params)}`, 60, async () => {
-    return optimizedProductQueries.getProducts(params);
-  });
-
-  return NextResponse.json({ products });
+  try {
+    const products = await getOrSet('products', async () => {
+      return await optimizedProductQueries.fetchAllProducts();
+    });
+    return NextResponse.json(products);
+  } catch (error: any) {
+    console.error('Products API Error:', error);
+    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+  }
 }
