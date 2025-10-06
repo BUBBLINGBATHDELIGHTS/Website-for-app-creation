@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       'products',        // cache key
       60 * 60,           // TTL = 1 hour
       async () => {      // fetcher
-        return await optimizedProductQueries.fetchAllProducts();
+        return await optimizedProductQueries.getProducts(); // ✅ fixed
       }
     );
 
