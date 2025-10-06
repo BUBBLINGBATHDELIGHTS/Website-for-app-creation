@@ -40,9 +40,8 @@ export default function ShopProductsPage({ searchParams }: { searchParams: Recor
             <a href="/shop/products?sort=seasonal">Seasonal curation</a>
           </Button>
         </div>
-      </div>
+            </div>
       <Suspense fallback={<ProductGrid products={[]} isLoading />}>
-        {/* @ts-expect-error Async Server Component */}
         <ProductsList searchParams={searchParams} />
       </Suspense>
     </div>
