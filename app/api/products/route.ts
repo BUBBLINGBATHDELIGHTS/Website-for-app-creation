@@ -8,16 +8,16 @@ import { optimizedProductQueries } from '@/lib/supabase/optimized-queries';
 
 /**
  * Fetches products with caching and Supabase optimization.
- * Uses Node.js runtime for full library compatibility.
+ * Uses Node.js runtime for compatibility with Redis and local cache.
  */
 export async function GET(request: Request) {
   try {
     const products = await getOrSet(
-      'products',
-      async () => {
+      'products',        // cache key
+      60 * 60,           // TTL = 1 hour
+      async () => {      // fetcher
         return await optimizedProductQueries.fetchAllProducts();
-      },
-      60 * 60 // Cache for 1 hour
+      }
     );
 
     return NextResponse.json(products);
