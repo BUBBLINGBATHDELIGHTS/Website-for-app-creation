@@ -1,33 +1,38 @@
 // app/api/revalidate/route.ts
 export const runtime = 'nodejs';
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 
 /**
- * Handles POST requests for on-demand revalidation of pages.
- * This ensures cache or ISR pages can be refreshed manually after updates.
+ * POST /api/revalidate
+ * Triggers revalidation for a given path in Next.js 14+
+ * Example request body: { "path": "/shop" }
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { path } = body;
+    const path = body.path;
 
     if (!path) {
-      return NextResponse.json({ error: 'Missing "path" in request body' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Path is required.' },
+        { status: 400 }
+      );
     }
 
-    // Trigger revalidation for the specified path
-    await request.revalidate(path);
+    // ✅ Correct Next.js 14 method
+    revalidatePath(path);
 
     return NextResponse.json({
       revalidated: true,
-      now: new Date().toISOString(),
-      path
+      path,
+      timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
-    console.error('Revalidation Error:', error);
+    console.error('Revalidate API Error:', error);
     return NextResponse.json(
-      { error: 'Failed to revalidate path', details: error?.message || 'Unknown error' },
+      { error: 'Revalidation failed.' },
       { status: 500 }
     );
   }
