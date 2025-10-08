@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
+// Placeholder customer roster; replace with Supabase-backed query for production use.
 const customers = [
   {
     name: 'Nova Hart',
@@ -24,7 +25,7 @@ export default function EmployeeCustomersPage() {
             <CardTitle>{customer.name}</CardTitle>
             <CardDescription>{customer.email}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-[#4F3C75]">
+          <CardContent className="space-y-2 text-sm text-purple-700">
             <p>Loyalty: {customer.loyalty}</p>
             <p>Sentiment: {customer.sentiment}</p>
           </CardContent>

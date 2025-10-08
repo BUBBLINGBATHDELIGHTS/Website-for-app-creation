@@ -8,17 +8,39 @@ import { useMutation } from '@tanstack/react-query';
 import { track } from '@/lib/utils/observability';
 
 async function generateContent(prompt: string) {
-  const response = await fetch('/api/ai/generate', {
-    method: 'POST',
-    body: JSON.stringify({ prompt }),
-  });
+  try {
+    const response = await fetch('/api/ai/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt }),
+    });
 
-  if (!response.ok) {
-    throw new Error('Failed to generate content');
+    if (!response.ok) {
+      throw new Error(`Failed to generate content (status ${response.status})`);
+    }
+
+    const contentType = response.headers.get('content-type') ?? '';
+    if (!contentType.includes('application/json')) {
+      throw new Error('Unexpected response format from AI endpoint');
+    }
+
+    const payload = (await response.json()) as { result?: unknown };
+    if (typeof payload.result !== 'string') {
+      throw new Error('AI response did not include generated text');
+    }
+
+    return payload.result;
+  } catch (error) {
+    if (error instanceof Error) {
+      track('ai.generate.error', { message: error.message });
+      throw error;
+    }
+
+    track('ai.generate.error', { message: 'Unknown error' });
+    throw new Error('Unknown error generating content');
   }
-
-  const { result } = await response.json();
-  return result as string;
 }
 
 export function AIWorkbench() {
@@ -40,7 +62,7 @@ export function AIWorkbench() {
           {mutation.isPending ? 'Summoning inspiration…' : 'Generate copy'}
         </Button>
         {mutation.data && (
-          <div className="rounded-2xl bg-white/70 p-4 text-sm text-[#4F3C75] shadow-inner">
+          <div className="rounded-2xl bg-white/70 p-4 text-sm text-purple-700 shadow-inner">
             <p className="whitespace-pre-wrap leading-relaxed">{mutation.data}</p>
           </div>
         )}

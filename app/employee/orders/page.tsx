@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   title: 'Orders · Employee Console',
 };
 
+async function advanceOrderAction(formData: FormData) {
+  'use server';
+  console.info('TODO: advance order status', formData.get('orderId'));
+}
+
+async function escalateOrderAction(formData: FormData) {
+  'use server';
+  console.warn('TODO: escalate order', formData.get('orderId'));
+}
+
+// Placeholder orders; replace with live Supabase data once available.
 const orders = [
   {
     id: 'ORD-2084',
@@ -29,15 +40,20 @@ export default function EmployeeOrdersPage() {
           <CardHeader>
             <CardTitle>{order.id}</CardTitle>
             <CardDescription>
-              {order.customer} · <span className="font-semibold text-[#2F1F52]">${order.total.toFixed(2)}</span>
+              {order.customer} · <span className="font-semibold text-purple-900">${order.total.toFixed(2)}</span>
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
-            <span className="rounded-full bg-[#F2ECFB] px-4 py-2 text-sm font-semibold text-[#4F3C75]">{order.status}</span>
-            <div className="flex gap-3">
-              <Button>Advance status</Button>
-              <Button variant="outline">Escalate</Button>
-            </div>
+          <CardContent>
+            <form action={advanceOrderAction} className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
+              <input type="hidden" name="orderId" value={order.id} />
+              <span className="rounded-full bg-blush-100 px-4 py-2 text-sm font-semibold text-purple-700">{order.status}</span>
+              <div className="flex gap-3">
+                <Button type="submit">Advance status</Button>
+                <Button type="submit" variant="outline" formAction={escalateOrderAction}>
+                  Escalate
+                </Button>
+              </div>
+            </form>
           </CardContent>
         </Card>
       ))}

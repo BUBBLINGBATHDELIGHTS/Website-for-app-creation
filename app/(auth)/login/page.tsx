@@ -17,11 +17,11 @@ export default function LoginPage() {
       <CardContent className="space-y-4">
         <form className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-[#4F3C75]">Email or DID</label>
+            <label className="text-sm font-semibold text-purple-700">Email or DID</label>
             <Input placeholder="you@bubblingbathdelights.com" required />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-[#4F3C75]">Magic phrase</label>
+            <label className="text-sm font-semibold text-purple-700">Magic phrase</label>
             <Input type="password" placeholder="••••••••" required />
           </div>
           <div className="flex gap-3">
@@ -33,7 +33,7 @@ export default function LoginPage() {
             </Button>
           </div>
         </form>
-        <p className="text-xs text-[#4F3C75]/70">
+        <p className="text-xs text-purple-700/70">
           Register authorised emails via the Working with Bubbles invite desk. Self-sovereign credentials supported in the
           next milestone.
         </p>

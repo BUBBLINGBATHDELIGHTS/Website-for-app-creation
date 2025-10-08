@@ -4,8 +4,8 @@ import './globals.css';
 import { Providers } from '@/components/shared/providers';
 import { NavigationBar } from '@/components/shared/navigation';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Bubbling Bath Delights',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen bg-[#FAF7F2]">
+      <body className="min-h-screen bg-rose-50">
         <Providers>
           <NavigationBar />
           <main className="mx-auto max-w-6xl px-6 pb-24 pt-12">{children}</main>
