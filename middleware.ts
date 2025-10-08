@@ -1,22 +1,35 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const protectedPrefixes: Record<string, Array<'admin' | 'employee' | 'customer'>> = {
-  '/admin': ['admin'],
-  '/employee': ['employee', 'admin'],
-  '/customer': ['customer', 'admin'],
+import {
+  ROLE_COOKIE_NAME,
+  ROUTE_ROLE_ALLOWLIST,
+  normalizeRole,
+  type WorkspaceRole,
+} from './lib/auth/role-constants';
+
+type ProtectedRoute = {
+  prefix: string;
+  allowedRoles: Set<WorkspaceRole>;
+  roleList: readonly WorkspaceRole[];
 };
 
-const ROLE_COOKIE_NAME = 'bbd-role';
+const protectedPrefixes: ProtectedRoute[] = Object.entries(ROUTE_ROLE_ALLOWLIST).map(
+  ([prefix, roleList]) => ({
+    prefix,
+    allowedRoles: new Set<WorkspaceRole>(roleList),
+    roleList,
+  }),
+);
 
 export function middleware(request: NextRequest) {
-  for (const [prefix, allowedRoles] of Object.entries(protectedPrefixes)) {
+  for (const { prefix, allowedRoles, roleList } of protectedPrefixes) {
     if (request.nextUrl.pathname.startsWith(prefix)) {
-      const cookieRole = request.cookies.get(ROLE_COOKIE_NAME)?.value?.toLowerCase();
-      if (!cookieRole || !allowedRoles.includes(cookieRole as typeof allowedRoles[number])) {
+      const cookieRole = normalizeRole(request.cookies.get(ROLE_COOKIE_NAME)?.value);
+      if (!cookieRole || !allowedRoles.has(cookieRole)) {
         const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('next', request.nextUrl.pathname);
-        loginUrl.searchParams.set('requiredRole', allowedRoles.join(','));
+        loginUrl.searchParams.set('requiredRole', roleList.join(','));
         return NextResponse.redirect(loginUrl);
       }
       break;
@@ -27,5 +40,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/employee/:path*', '/customer/:path*'],
+  matcher: Object.keys(ROUTE_ROLE_ALLOWLIST).map((prefix) => `${prefix}/:path*`),
 };
