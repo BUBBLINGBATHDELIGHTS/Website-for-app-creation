@@ -1,22 +1,14 @@
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export type WorkspaceRole = 'admin' | 'employee' | 'customer';
+import {
+  ROLE_COOKIE_NAME,
+  normalizeRole,
+  type WorkspaceRole,
+} from './role-constants';
 
-const ROLE_COOKIE_NAME = 'bbd-role';
-
-function normalizeRole(candidate: string | undefined): WorkspaceRole | null {
-  if (!candidate) {
-    return null;
-  }
-
-  const value = candidate.toLowerCase();
-  if (value === 'admin' || value === 'employee' || value === 'customer') {
-    return value;
-  }
-
-  return null;
-}
+export type { WorkspaceRole } from './role-constants';
+export { ROLE_COOKIE_NAME, normalizeRole } from './role-constants';
 
 export function getCurrentRole(): WorkspaceRole | null {
   const roleCookie = cookies().get(ROLE_COOKIE_NAME)?.value;
@@ -29,7 +21,7 @@ type RequireRoleOptions = {
 };
 
 export async function requireRole(
-  allowed: WorkspaceRole | WorkspaceRole[],
+  allowed: WorkspaceRole | readonly WorkspaceRole[],
   options: RequireRoleOptions = {},
 ): Promise<WorkspaceRole> {
   const allowList = Array.isArray(allowed) ? allowed : [allowed];
