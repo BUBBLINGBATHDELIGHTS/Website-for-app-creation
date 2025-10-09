@@ -8,6 +8,10 @@ export function createClient() {
     throw new Error('Supabase environment variables are missing.');
   }
 
+  if (!url.startsWith('https://')) {
+    throw new Error('SUPABASE_URL must start with https:// to satisfy secure transport requirements.');
+  }
+
   return createSupabaseClient(url, key, {
     global: {
       headers: {

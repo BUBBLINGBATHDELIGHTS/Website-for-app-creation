@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getOrSet } from '@/lib/utils/cache';
 import { optimizedProductQueries } from '@/lib/supabase/optimized-queries';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 export const revalidate = 60;
 
 export async function GET(request: Request) {

@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils/cn';
 
 type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
-  variant?: 'default' | 'outline' | 'success';
+  variant?: 'default' | 'outline' | 'success' | 'warning' | 'destructive' | 'secondary';
 };
 
 export function Badge({ className, variant = 'default', ...props }: BadgeProps) {
@@ -9,9 +9,12 @@ export function Badge({ className, variant = 'default', ...props }: BadgeProps) 
     <span
       className={cn(
         'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide',
-        variant === 'default' && 'bg-[#B8A8EA]/80 text-[#2F1F52]',
-        variant === 'outline' && 'border border-[#B8A8EA]/40 text-[#2F1F52]/80',
-        variant === 'success' && 'bg-[#7FB9A7]/80 text-white',
+        variant === 'default' && 'bg-blush-300/80 text-purple-900',
+        variant === 'outline' && 'border border-blush-300/40 text-purple-900/80',
+        variant === 'success' && 'bg-eucalyptus-400/80 text-white',
+        variant === 'warning' && 'bg-amber-300/80 text-amber-900',
+        variant === 'destructive' && 'bg-rose-400/90 text-white',
+        variant === 'secondary' && 'bg-purple-100 text-purple-700',
         className,
       )}
       {...props}

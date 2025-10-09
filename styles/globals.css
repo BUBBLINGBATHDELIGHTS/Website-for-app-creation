@@ -7,7 +7,7 @@
 }
 
 body {
-  @apply bg-[#FAF7F2] text-slate-900 antialiased;
+  @apply bg-rose-50 text-slate-900 antialiased;
 }
 
 ::-webkit-scrollbar {
@@ -16,6 +16,6 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #b8a8ea 0%, #7fb9a7 100%);
+  background-image: linear-gradient(135deg, theme('colors.blush.300') 0%, theme('colors.eucalyptus.400') 100%);
   border-radius: 9999px;
 }

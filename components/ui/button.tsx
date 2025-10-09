@@ -6,14 +6,14 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils/cn';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 ring-offset-[#FAF7F2]',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 ring-offset-rose-50',
   {
     variants: {
       variant: {
-        default: 'bg-gradient-to-r from-[#B8A8EA] to-[#7FB9A7] text-white shadow-sm hover:brightness-105',
-        outline: 'border border-[#B8A8EA] text-[#4F3C75] hover:bg-[#F2ECFB]',
-        ghost: 'bg-transparent text-[#4F3C75] hover:bg-[#F2ECFB] hover:text-[#2F1F52]',
-        subtle: 'bg-[#FFFFFF]/80 text-[#2F1F52] shadow-inner hover:bg-white',
+        default: 'bg-gradient-to-r from-blush-300 to-eucalyptus-400 text-white shadow-sm hover:brightness-105',
+        outline: 'border border-blush-300 text-purple-700 hover:bg-blush-100 hover:text-purple-900',
+        ghost: 'bg-transparent text-purple-700 hover:bg-blush-100 hover:text-purple-900',
+        subtle: 'bg-white/80 text-purple-900 shadow-inner hover:bg-white',
       },
       size: {
         default: 'h-10 px-5 py-2',
@@ -38,7 +38,7 @@ export interface ButtonProps
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
+    return <Comp className={cn(buttonVariants({ variant, size }), className)} ref={ref} {...props} />;
   },
 );
 Button.displayName = 'Button';

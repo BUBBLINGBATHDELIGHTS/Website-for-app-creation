@@ -22,7 +22,7 @@ export default function CartPage() {
             <CardDescription>Qty {item.quantity}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
-            <span className="text-lg font-semibold text-[#2F1F52]">${(item.price * item.quantity).toFixed(2)}</span>
+            <span className="text-lg font-semibold text-purple-900">${(item.price * item.quantity).toFixed(2)}</span>
             <div className="flex gap-3">
               <Button variant="outline">Adjust</Button>
               <Button variant="ghost">Remove</Button>
@@ -36,7 +36,7 @@ export default function CartPage() {
           <CardDescription>Includes seasonal 10% membership incentive.</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center gap-4">
-          <span className="text-2xl font-semibold text-[#2F1F52]">${(subtotal * 0.9).toFixed(2)}</span>
+          <span className="text-2xl font-semibold text-purple-900">${(subtotal * 0.9).toFixed(2)}</span>
           <Button size="lg">Proceed to checkout</Button>
         </CardContent>
       </Card>

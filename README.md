@@ -4,7 +4,7 @@ This repository now runs on **Next.js 14 with the App Router, React Server Compo
 
 ## 🧭 Architectural Overview
 
-```
+```text
 bubblingbathdelights/
 ├── app/                  # Next.js App Router (SSR + ISR + edge APIs)
 │   ├── (auth)/           # Login, workspace access
@@ -46,13 +46,14 @@ The app runs at `http://localhost:3000` with hot reload. API routes are accessib
 
 Create `.env.local` using the template below (see `.env.example` in the repo):
 
-```
+```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=public-anon-key
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=service-role-or-anon
 SUPABASE_SERVICE_ROLE_KEY=service-role-key
-REDIS_URL=redis://default:password@localhost:6379
+REDIS_URL=redis://:password@localhost:6379
+REVALIDATE_API_KEY=your-revalidation-key
 ```
 
 - `SUPABASE_SERVICE_ROLE_KEY` enables server components and edge routes to enforce granular row-level security policies that you configure inside Supabase.
@@ -73,7 +74,7 @@ REDIS_URL=redis://default:password@localhost:6379
 
 - **Adaptive ritual builder** at `/shop/customize` uses Zustand persistence, Framer Motion micro-interactions, and optimistic UI confirmations to keep guests in flow.
 - **Product listing & detail** pages render as React Server Components with cached Supabase queries (`lib/supabase/optimized-queries.ts`) and edge caching hints.
-- **Admin AI workbench** streams prompts through `/api/ai/generate` (edge runtime) with graceful client-side fallbacks when OpenAI credentials are unavailable.
+- **Admin AI workbench** streams prompts through `/api/ai/generate` (Node runtime with an edge-safe fallback) with graceful client-side fallbacks when OpenAI credentials are unavailable.
 - **Employee portal** surfaces order, customer, and inquiry queues with optimistic status updates aligned to a zero-trust future (JWT/VC integration planned).
 - **Redis-aware caching layer** (`lib/utils/cache.ts`) gives you drop-in edge caching for products, metrics, or any expensive Supabase queries.
 

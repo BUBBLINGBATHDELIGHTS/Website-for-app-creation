@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export default function HomePage() {
   return (
     <div className="space-y-16">
-      <section className="relative overflow-hidden rounded-[3rem] bg-gradient-to-r from-[#B8A8EA] to-[#7FB9A7] px-8 py-16 text-white">
+      <section className="relative overflow-hidden rounded-[3rem] bg-gradient-to-r from-blush-300 to-eucalyptus-400 px-8 py-16 text-white">
         <div className="absolute inset-0 opacity-40">
           <Image
             src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1400&q=80"
@@ -43,8 +43,8 @@ export default function HomePage() {
             key={title}
             className="rounded-3xl border border-white/60 bg-white/80 p-6 shadow-[0_30px_60px_rgba(127,185,167,0.2)]"
           >
-            <h2 className="font-display text-2xl text-[#2F1F52]">{title}</h2>
-            <p className="mt-3 text-sm text-[#4F3C75]">
+            <h2 className="font-display text-2xl text-purple-900">{title}</h2>
+            <p className="mt-3 text-sm text-purple-700">
               {[
                 'Framer Motion micro-interactions and mood-aware palettes tailor each session to the guest in real time.',
                 'Decentralized identifiers and verifiable credentials give guests total control of their cherished wellness data.',
@@ -57,8 +57,8 @@ export default function HomePage() {
       <section className="grid gap-8 rounded-[3rem] bg-white/80 p-10 shadow-[0_40px_80px_rgba(184,168,234,0.2)]">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="font-display text-3xl text-[#2F1F52]">Featured Mood Journeys</h2>
-            <p className="text-sm text-[#4F3C75]">
+            <h2 className="font-display text-3xl text-purple-900">Featured Mood Journeys</h2>
+            <p className="text-sm text-purple-700">
               Generated daily by our autonomous agent collective.
             </p>
           </div>
@@ -68,9 +68,9 @@ export default function HomePage() {
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {["Lavender Orbit", "Eucalyptus Echo", "Vanilla Moon"].map((name) => (
-            <div key={name} className="rounded-3xl bg-gradient-to-br from-white to-[#F2ECFB] p-6">
-              <h3 className="font-display text-xl text-[#2F1F52]">{name}</h3>
-              <p className="mt-2 text-sm text-[#4F3C75]">
+            <div key={name} className="rounded-3xl bg-gradient-to-br from-white to-blush-100 p-6">
+              <h3 className="font-display text-xl text-purple-900">{name}</h3>
+              <p className="mt-2 text-sm text-purple-700">
                 AI-personalised sensory layering that adapts to time of day, weather, and your emotional cadence.
               </p>
               <Button variant="ghost" className="mt-4" asChild>

@@ -35,12 +35,12 @@ export function ProductCard({ id, name, price, hero_image, tags = [], rating, re
       </Link>
       <div className="space-y-3 p-5">
         <div className="flex items-center justify-between">
-          <Link href={`/shop/products/${id}`} className="font-display text-lg text-[#2F1F52]">
+          <Link href={`/shop/products/${id}`} className="font-display text-lg text-purple-900">
             {name}
           </Link>
-          <span className="text-base font-semibold text-[#4F3C75]">${price.toFixed(2)}</span>
+          <span className="text-base font-semibold text-purple-700">${price.toFixed(2)}</span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-[#8C7BAF]">
+        <div className="flex items-center gap-2 text-xs text-purple-600">
           {rating ? `${rating.toFixed(1)} · ` : ''}
           {review_count ? `${review_count} reviews` : 'New ritual'}
         </div>
