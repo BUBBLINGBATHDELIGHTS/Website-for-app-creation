@@ -10,15 +10,23 @@ import { track } from '@/lib/utils/observability';
 async function generateContent(prompt: string) {
   const response = await fetch('/api/ai/generate', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify({ prompt }),
   });
 
+  const payload = await response.json();
+
   if (!response.ok) {
-    throw new Error('Failed to generate content');
+    throw new Error(payload?.error ?? 'Failed to generate content');
   }
 
-  const { result } = await response.json();
-  return result as string;
+  if (typeof payload?.result !== 'string') {
+    throw new Error('Unexpected response from AI generator');
+  }
+
+  return payload.result as string;
 }
 
 export function AIWorkbench() {
@@ -36,7 +44,7 @@ export function AIWorkbench() {
       </CardHeader>
       <CardContent className="space-y-4">
         <Textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} rows={4} />
-        <Button disabled={mutation.isPending} onClick={() => mutation.mutate(prompt)}>
+        <Button disabled={mutation.isPending || !prompt.trim()} onClick={() => mutation.mutate(prompt.trim())}>
           {mutation.isPending ? 'Summoning inspiration…' : 'Generate copy'}
         </Button>
         {mutation.data && (
