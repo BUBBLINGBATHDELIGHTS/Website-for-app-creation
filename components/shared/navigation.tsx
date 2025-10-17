@@ -21,15 +21,20 @@ export function NavigationBar() {
   const { theme } = useSeasonalTheme();
 
   return (
-    <nav
-      className="sticky top-0 z-40 border-b border-white/40 backdrop-blur"
-      style={{ backgroundColor: 'rgba(255,255,255,0.12)' }}
-    >
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="font-display text-2xl text-[color:var(--bbd-text-primary)]">
+    <nav className="sticky top-0 z-50 px-4 pt-6">
+      <div
+        className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 rounded-full border border-white/20 bg-white/10 px-6 py-3 shadow-[0_18px_50px_rgba(10,4,32,0.45)] backdrop-blur-xl"
+        style={{
+          backgroundImage: `linear-gradient(120deg, ${theme?.palette.gradientStart ?? '#B8A8EA'}33, ${theme?.palette.gradientEnd ?? '#7FB9A7'}40)` ,
+        }}
+      >
+        <Link
+          href="/"
+          className="font-display text-xl font-semibold uppercase tracking-[0.3em] text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]"
+        >
           Bubbling Bath Delights
         </Link>
-        <div className="hidden gap-1 rounded-full bg-white/20 p-1 shadow-inner md:flex">
+        <div className="hidden gap-1 rounded-full bg-white/10 p-1 shadow-inner backdrop-blur md:flex">
           {routes.map((route) => {
             const active = pathname?.startsWith(route.href);
             return (
@@ -55,7 +60,12 @@ export function NavigationBar() {
             );
           })}
         </div>
-        <CartFlyout />
+        <div className="flex items-center gap-3">
+          <div className="hidden shrink-0 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-white/90 shadow-inner md:flex">
+            Seasonal Drop
+          </div>
+          <CartFlyout />
+        </div>
       </div>
     </nav>
   );

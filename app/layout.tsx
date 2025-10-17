@@ -5,6 +5,7 @@ import { Providers } from '@/components/shared/providers';
 import { NavigationBar } from '@/components/shared/navigation';
 import { getActiveSeasonalTheme } from '@/lib/utils/seasonal-theme';
 import { ChatbotWidget } from '@/components/shared/chatbot-widget';
+import { AuroraBackground } from '@/components/shared/aurora-background';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
@@ -21,20 +22,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
-      <body
-        className="min-h-screen"
-        style={{
-          backgroundColor: palette?.background,
-          color: palette?.textPrimary,
-          backgroundImage: `radial-gradient(circle at top left, ${palette?.gradientStart ?? '#B8A8EA'}, transparent 55%), radial-gradient(circle at bottom right, ${palette?.gradientEnd ?? '#7FB9A7'}, transparent 45%)`,
-        }}
-      >
+      <body className="min-h-screen overflow-x-hidden" style={{ backgroundColor: palette?.background, color: palette?.textPrimary }}>
         <Providers season={season} theme={theme}>
-          <NavigationBar />
-          <main className="mx-auto max-w-6xl px-6 pb-24 pt-12 text-[color:var(--bbd-text-primary)]">
-            {children}
-          </main>
-          <ChatbotWidget />
+          <div className="relative flex min-h-screen flex-col">
+            <AuroraBackground />
+            <NavigationBar />
+            <main className="relative z-10 mx-auto w-full max-w-6xl px-6 pb-24 pt-12 text-[color:var(--bbd-text-primary)]">
+              {children}
+            </main>
+            <ChatbotWidget />
+          </div>
         </Providers>
       </body>
     </html>
