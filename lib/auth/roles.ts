@@ -1,9 +1,9 @@
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export type WorkspaceRole = 'admin' | 'employee' | 'customer';
+import { ROLE_COOKIE_NAME } from './constants';
 
-const ROLE_COOKIE_NAME = 'bbd-role';
+export type WorkspaceRole = 'admin' | 'employee' | 'customer';
 
 function normalizeRole(candidate: string | undefined): WorkspaceRole | null {
   if (!candidate) {
