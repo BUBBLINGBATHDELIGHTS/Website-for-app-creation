@@ -2,6 +2,7 @@
   "name": "bubblingbathdelights",
   "version": "2.0.0",
   "private": true,
+  "packageManager": "npm@11.4.2",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
