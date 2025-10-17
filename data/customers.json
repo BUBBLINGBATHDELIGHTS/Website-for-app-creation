@@ -1,0 +1,56 @@
+[
+  {
+    "id": "CUS-9001",
+    "name": "Avery Lumen",
+    "email": "avery@example.com",
+    "phone": "+1-415-555-0100",
+    "loyaltyTier": "Aurora",
+    "points": 1840,
+    "lifetimeValue": 948,
+    "createdAt": "2022-08-14T18:11:00.000Z",
+    "addresses": [
+      {
+        "label": "Primary",
+        "address1": "892 Aurora Lane",
+        "address2": "Suite 405",
+        "city": "San Francisco",
+        "state": "CA",
+        "postalCode": "94107",
+        "country": "US"
+      }
+    ],
+    "preferences": {
+      "favoriteSeasons": ["winter", "spring"],
+      "favoriteCollections": ["Lunar", "Recovery"],
+      "scentProfile": ["floral", "citrus"],
+      "emailOptIn": true
+    }
+  },
+  {
+    "id": "CUS-9002",
+    "name": "Kai River",
+    "email": "kai@example.com",
+    "phone": "+1-646-555-0119",
+    "loyaltyTier": "Lumen",
+    "points": 620,
+    "lifetimeValue": 420,
+    "createdAt": "2023-03-02T09:20:00.000Z",
+    "addresses": [
+      {
+        "label": "Loft",
+        "address1": "44 Moonstone Terrace",
+        "address2": "",
+        "city": "Brooklyn",
+        "state": "NY",
+        "postalCode": "11231",
+        "country": "US"
+      }
+    ],
+    "preferences": {
+      "favoriteSeasons": ["summer"],
+      "favoriteCollections": ["Glow", "Signature"],
+      "scentProfile": ["citrus", "amber"],
+      "emailOptIn": true
+    }
+  }
+]

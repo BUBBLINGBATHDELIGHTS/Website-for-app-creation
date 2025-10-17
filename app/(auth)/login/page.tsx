@@ -1,7 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Metadata } from 'next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { Metadata } from 'next';
+import { LoginForm } from '@/components/shared/login-form';
 
 export const metadata: Metadata = {
   title: 'Login · Bubbling Bath Delights',
@@ -9,34 +8,15 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <Card className="mx-auto max-w-md">
+    <Card className="mx-auto max-w-lg border-white/40 bg-white/70 shadow-2xl backdrop-blur">
       <CardHeader>
-        <CardTitle>Welcome back</CardTitle>
-        <CardDescription>Choose your workspace and authenticate with your decentralised identity.</CardDescription>
+        <CardTitle className="font-display text-2xl text-[#2F1F52]">Secure access</CardTitle>
+        <CardDescription className="text-[#4F3C75]">
+          Sign in with your authorised credentials to enter the admin or employee sanctuary.
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <form className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-[#4F3C75]">Email or DID</label>
-            <Input placeholder="you@bubblingbathdelights.com" required />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-[#4F3C75]">Magic phrase</label>
-            <Input type="password" placeholder="••••••••" required />
-          </div>
-          <div className="flex gap-3">
-            <Button type="submit" className="flex-1">
-              Enter admin sanctuary
-            </Button>
-            <Button type="button" variant="outline" className="flex-1">
-              Employee realm
-            </Button>
-          </div>
-        </form>
-        <p className="text-xs text-[#4F3C75]/70">
-          Register authorised emails via the Working with Bubbles invite desk. Self-sovereign credentials supported in the
-          next milestone.
-        </p>
+      <CardContent>
+        <LoginForm />
       </CardContent>
     </Card>
   );

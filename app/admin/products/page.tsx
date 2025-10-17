@@ -1,46 +1,76 @@
+import { ProductForm } from '@/components/admin/product-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { generateProductDescriptions } from '@/lib/ai/local-processing';
-import { use } from 'react';
+import { listProducts } from '@/lib/data/products';
+import { deleteProductAction, updateInventoryAction } from './actions';
 
-async function getSuggestedCopy() {
-  return generateProductDescriptions({ name: 'Rose Quartz Aura', mood: 'calm confidence' });
-}
+export const revalidate = 120;
 
-export default function AdminProductsPage() {
-  const suggestion = use(getSuggestedCopy());
+export default async function AdminProductsPage() {
+  const products = await listProducts();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="space-y-2">
         <h1 className="font-display text-3xl text-[#2F1F52]">Product orchestration</h1>
-        <p className="text-sm text-[#4F3C75]">
-          Manage categories, inventory, and promo codes with on-device AI assists.
-        </p>
+        <p className="text-sm text-[#4F3C75]">Manage inventory, seasonal collections, and launch new rituals.</p>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Upload new ritual</CardTitle>
-          <CardDescription>Codex-inspired assistant suggests descriptions, SEO tags, and promotional content.</CardDescription>
+          <CardTitle>Create new ritual</CardTitle>
+          <CardDescription>Use the form to add a product with seasonal theming.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-3 md:grid-cols-2">
-            <Input placeholder="Product name" defaultValue="Rose Quartz Aura" />
-            <Input placeholder="Price" defaultValue="28.00" type="number" step="0.01" />
-          </div>
-          <Input placeholder="Seasonal tags (comma separated)" defaultValue="winter, aurora, spa" />
-          <textarea
-            className="min-h-[160px] w-full rounded-3xl border border-[#E5DFF7] bg-white/70 p-4 text-sm text-[#2F1F52] shadow-inner"
-            defaultValue={suggestion}
-          />
-          <div className="flex gap-3">
-            <Button>Save to Supabase</Button>
-            <Button variant="outline">Preview SEO</Button>
-            <Button variant="ghost">Generate campaign</Button>
-          </div>
+        <CardContent>
+          <ProductForm />
         </CardContent>
       </Card>
+      <section className="space-y-4">
+        <h2 className="font-display text-2xl text-[#2F1F52]">Current catalogue</h2>
+        <div className="grid gap-4">
+          {products.map((product) => (
+            <Card key={product.id}>
+              <CardHeader className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <CardTitle>{product.name}</CardTitle>
+                  <CardDescription>
+                    {product.category} · ${product.price.toFixed(2)} · Inventory {product.inventory}
+                  </CardDescription>
+                </div>
+                <form action={deleteProductAction} className="flex gap-3">
+                  <input type="hidden" name="id" value={product.id} />
+                  <Button type="submit" variant="ghost">
+                    Remove
+                  </Button>
+                </form>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-[#4F3C75]">{product.shortDescription}</p>
+                <form action={updateInventoryAction} className="flex items-center gap-3">
+                  <input type="hidden" name="id" value={product.id} />
+                  <Input
+                    name="inventory"
+                    type="number"
+                    defaultValue={product.inventory}
+                    className="w-32 bg-white/80"
+                    aria-label={`Inventory for ${product.name}`}
+                  />
+                  <Button type="submit" variant="outline">
+                    Update inventory
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          ))}
+          {products.length === 0 && (
+            <Card>
+              <CardContent className="py-10 text-center text-sm text-[#4F3C75]">
+                No products yet—create your first ritual above.
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

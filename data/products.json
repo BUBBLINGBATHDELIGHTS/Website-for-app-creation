@@ -1,0 +1,236 @@
+[
+  {
+    "id": "auric-dawn-bath-bomb",
+    "name": "Auric Dawn Bath Bomb",
+    "sku": "BBD-AURIC-001",
+    "price": 24,
+    "inventory": 68,
+    "category": "Bath Bombs",
+    "collections": ["Spring", "Signature"],
+    "season": "spring",
+    "shortDescription": "Sun-warmed citrus, neroli petals, and effervescent pearl shimmer awaken every soak.",
+    "description": "Immerse yourself in the golden glow of Auric Dawn. This slow-release bath bomb layers Amalfi lemon, neroli blossom, and dew-soft petals with skin-conditioning apricot oil. Micro-encapsulated vitamin C bursts illuminate the water while biodegradable mica creates a subtle champagne sheen.",
+    "benefits": [
+      "Brightens mood with luminous citrus aromatherapy",
+      "Hydrates skin with cold-pressed apricot oil",
+      "Biodegradable shimmer leaves tubs residue-free"
+    ],
+    "fragranceNotes": ["Lemon Zest", "Neroli", "White Tea"],
+    "images": [
+      "https://images.unsplash.com/photo-1619983081593-ec9c0c9badd9?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "tags": ["citrus", "uplifting", "vegan"],
+    "rating": 4.9,
+    "reviewCount": 312,
+    "createdAt": "2024-02-12T10:00:00.000Z"
+  },
+  {
+    "id": "midnight-orchid-elixir",
+    "name": "Midnight Orchid Elixir",
+    "sku": "BBD-ELIX-104",
+    "price": 58,
+    "inventory": 32,
+    "category": "Bath Oils",
+    "collections": ["Signature", "Night"],
+    "season": "fall",
+    "shortDescription": "A hypnotic infusion of black orchid, bourbon vanilla, and molten amber for twilight rituals.",
+    "description": "Velvet-rich and hypnotic, Midnight Orchid Elixir drapes skin in indulgent moisture. Sustainably harvested orchid absolute mingles with bourbon vanilla, cocoa husk, and slow-aged amber resin. A single capful transforms bathwater into a silken veil, with adaptogenic ashwagandha to ground restless minds.",
+    "benefits": [
+      "Deeply nourishes with camellia and marula oils",
+      "Ashwagandha and magnesium calm the nervous system",
+      "Dramatic fragrance lingers on skin up to 12 hours"
+    ],
+    "fragranceNotes": ["Black Orchid", "Vanilla", "Amber"],
+    "images": [
+      "https://images.unsplash.com/photo-1600180758890-6d6be65c5d94?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1523380873070-83f8d6f27c4a?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "tags": ["luxury", "nocturnal", "ashwagandha"],
+    "rating": 4.8,
+    "reviewCount": 189,
+    "createdAt": "2024-01-05T05:30:00.000Z"
+  },
+  {
+    "id": "glacial-mineral-soak",
+    "name": "Glacial Mineral Soak",
+    "sku": "BBD-SOAK-207",
+    "price": 34,
+    "inventory": 112,
+    "category": "Soaking Salts",
+    "collections": ["Winter", "Recovery"],
+    "season": "winter",
+    "shortDescription": "Cooling peppermint, blue eucalyptus, and Arctic mineral crystals relieve tension and reset circulation.",
+    "description": "Inspired by Nordic thermal rituals, Glacial Mineral Soak blends Icelandic sea salt, glacial clay, and magnesium flakes with blue eucalyptus, peppermint, and alpine pine. Mentholated vapors clear the senses while mineral-rich waters ease tired muscles and restore circulation.",
+    "benefits": [
+      "Magnesium chloride eases muscle tension",
+      "Icelandic sea salt remineralises skin",
+      "Cooling aromatics refresh congested senses"
+    ],
+    "fragranceNotes": ["Peppermint", "Blue Eucalyptus", "Alpine Pine"],
+    "images": [
+      "https://images.unsplash.com/photo-1615484477215-9f1e3f43b437?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1525287110032-5e0a71c8d09c?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "tags": ["cooling", "magnesium", "spa"],
+    "rating": 4.7,
+    "reviewCount": 247,
+    "createdAt": "2023-11-18T13:45:00.000Z"
+  },
+  {
+    "id": "rose-quartz-sugar-souffle",
+    "name": "Rose Quartz Sugar Soufflé",
+    "sku": "BBD-SCRB-315",
+    "price": 46,
+    "inventory": 54,
+    "category": "Body Scrubs",
+    "collections": ["Valentine", "Spring"],
+    "season": "spring",
+    "shortDescription": "Whipped sugar crystals, damask rose, and luminous gold leaf polish skin to a petal-soft finish.",
+    "description": "This whipped sugar polish suspends damask rose petals, Bulgarian rose otto, and antioxidant lychee in a cloud of coconut milk. Finely milled rose quartz energises the skin while a final dusting of edible gold leaf adds a touch of ceremony.",
+    "benefits": [
+      "Reveals glowing skin with finely milled sugar",
+      "Rose quartz energises and smooths texture",
+      "Gold leaf and lychee extract brighten complexion"
+    ],
+    "fragranceNotes": ["Damask Rose", "Lychee", "Coconut Milk"],
+    "images": [
+      "https://images.unsplash.com/photo-1512207846876-bb3c391f7b67?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "tags": ["radiance", "rose", "gold"],
+    "rating": 4.95,
+    "reviewCount": 428,
+    "createdAt": "2024-02-02T21:05:00.000Z"
+  },
+  {
+    "id": "cocoa-absolu-bath-truffle",
+    "name": "Cocoa Absolu Bath Truffle",
+    "sku": "BBD-TRFL-401",
+    "price": 16,
+    "inventory": 140,
+    "category": "Bath Bombs",
+    "collections": ["Holiday", "Comfort"],
+    "season": "holiday",
+    "shortDescription": "Decadent cocoa butter, smoked vanilla, and molten caramel swirl into a velvet soak.",
+    "description": "Hand-poured with triple-milled cocoa butter, this slow-melting truffle infuses bathwater with smoked Madagascar vanilla, caramelised tonka, and a kiss of spiced rum. Oat silk and marshmallow root cocoon skin against winter dryness.",
+    "benefits": [
+      "Deeply moisturises with ceremonial-grade cocoa butter",
+      "Oat silk soothes sensitive skin",
+      "Indulgent aroma evokes patisserie warmth"
+    ],
+    "fragranceNotes": ["Cocoa", "Smoked Vanilla", "Caramel"],
+    "images": [
+      "https://images.unsplash.com/photo-1600180758890-6d6be65c5d94?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "tags": ["cocoa", "holiday", "butter"],
+    "rating": 4.6,
+    "reviewCount": 163,
+    "createdAt": "2023-10-01T08:20:00.000Z"
+  },
+  {
+    "id": "celestial-tides-bath-milk",
+    "name": "Celestial Tides Bath Milk",
+    "sku": "BBD-MILK-222",
+    "price": 52,
+    "inventory": 41,
+    "category": "Bath Milks",
+    "collections": ["Summer", "Lunar"],
+    "season": "summer",
+    "shortDescription": "Opalescent coconut milk, jasmine sambac, and moonstone essence envelop skin in lunar radiance.",
+    "description": "Celestial Tides is a moonlit infusion of coconut milk, jasmine sambac, blue tansy, and probiotic rice ferment. Micro-powdered moonstone energises the aura while adaptogenic holy basil soothes and balances. The bathwater transforms into an opalescent milky tide.",
+    "benefits": [
+      "Rice ferment and probiotics fortify the microbiome",
+      "Moonstone essence supports restful sleep",
+      "Blue tansy calms redness and irritation"
+    ],
+    "fragranceNotes": ["Jasmine Sambac", "Coconut", "Blue Tansy"],
+    "images": [
+      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1512207846876-bb3c391f7b67?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "tags": ["jasmine", "calming", "moonstone"],
+    "rating": 4.9,
+    "reviewCount": 274,
+    "createdAt": "2023-07-07T19:00:00.000Z"
+  },
+  {
+    "id": "emerald-forest-steam",
+    "name": "Emerald Forest Steam",
+    "sku": "BBD-STM-509",
+    "price": 22,
+    "inventory": 95,
+    "category": "Shower Steamers",
+    "collections": ["Wellness", "Spring"],
+    "season": "spring",
+    "shortDescription": "Forest bathing at home with crisp fir needle, moss, and wet earth accord steam tablets.",
+    "description": "Transform your shower into a woodland sanctuary. Emerald Forest Steam tablets release layers of fir needle, cypress, damp moss, and petrichor accord. Spirulina and chlorophyll infuse the steam with phytonutrients while inhalation-grade menthol opens every breath.",
+    "benefits": [
+      "Mentholated vapors clear congestion",
+      "Spirulina brightens and detoxifies skin",
+      "Supports grounding rituals in small spaces"
+    ],
+    "fragranceNotes": ["Fir Needle", "Moss", "Rain Accord"],
+    "images": [
+      "https://images.unsplash.com/photo-1504198458649-3128b932f49b?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "tags": ["forest", "steam", "grounding"],
+    "rating": 4.5,
+    "reviewCount": 201,
+    "createdAt": "2024-03-20T09:12:00.000Z"
+  },
+  {
+    "id": "solstice-citrus-polish",
+    "name": "Solstice Citrus Polish",
+    "sku": "BBD-SCRB-333",
+    "price": 38,
+    "inventory": 83,
+    "category": "Body Scrubs",
+    "collections": ["Summer", "Glow"],
+    "season": "summer",
+    "shortDescription": "Crushed yuzu, pink pepper, and golden jojoba spheres energise the skin for sun-drenched days.",
+    "description": "Solstice Citrus Polish uses biodegradable jojoba spheres, bamboo powder, and glacial water to sweep away dullness. Sparkling yuzu, pink pepper, and passionfruit nectar uplift the senses while vitamin E and prickly pear oil drench skin in moisture.",
+    "benefits": [
+      "Boosts circulation with pink pepper extract",
+      "Prickly pear hydrates without residue",
+      "Yuzu and passionfruit brighten mood"
+    ],
+    "fragranceNotes": ["Yuzu", "Pink Pepper", "Passionfruit"],
+    "images": [
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1512207846876-bb3c391f7b67?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "tags": ["brightening", "yuzu", "summer"],
+    "rating": 4.7,
+    "reviewCount": 178,
+    "createdAt": "2023-06-15T14:22:00.000Z"
+  },
+  {
+    "id": "nocturne-lavender-mist",
+    "name": "Nocturne Lavender Mist",
+    "sku": "BBD-MIST-610",
+    "price": 28,
+    "inventory": 210,
+    "category": "Aromatherapy",
+    "collections": ["Night", "Wellness"],
+    "season": "winter",
+    "shortDescription": "French lavender, silver sage, and valerian root lull the senses into serene sleep.",
+    "description": "Designed for pillow, linen, and aura, Nocturne Lavender Mist pairs biodynamic lavender with silver sage, valerian root, and crystal-infused spring water. The micro-fine mist softens airways and ushers in tranquil dreams.",
+    "benefits": [
+      "Valerian root reduces sleep latency",
+      "Crystal-infused spring water elevates ritual",
+      "Can be used on skin, linens, or within bath steam"
+    ],
+    "fragranceNotes": ["Lavender", "Sage", "Valerian"],
+    "images": [
+      "https://images.unsplash.com/photo-1505576633757-0ac1084af824?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "tags": ["sleep", "lavender", "soothing"],
+    "rating": 4.4,
+    "reviewCount": 98,
+    "createdAt": "2023-09-09T22:15:00.000Z"
+  }
+]

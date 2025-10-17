@@ -1,0 +1,68 @@
+[
+  {
+    "id": "ORD-1024",
+    "status": "pending",
+    "createdAt": "2024-04-12T16:45:00.000Z",
+    "updatedAt": "2024-04-12T16:45:00.000Z",
+    "total": 118.8,
+    "discount": 13.2,
+    "payment": {
+      "method": "stripe",
+      "last4": "4242",
+      "status": "authorized"
+    },
+    "shipping": {
+      "name": "Avery Lumen",
+      "email": "avery@example.com",
+      "phone": "+1-415-555-0100",
+      "address1": "892 Aurora Lane",
+      "address2": "Suite 405",
+      "city": "San Francisco",
+      "state": "CA",
+      "postalCode": "94107",
+      "country": "US",
+      "method": "expedited"
+    },
+    "items": [
+      { "productId": "auric-dawn-bath-bomb", "name": "Auric Dawn Bath Bomb", "price": 24, "quantity": 2 },
+      { "productId": "rose-quartz-sugar-souffle", "name": "Rose Quartz Sugar Soufflé", "price": 46, "quantity": 1 }
+    ],
+    "timeline": [
+      { "status": "pending", "note": "Awaiting manual approval", "timestamp": "2024-04-12T16:45:00.000Z" }
+    ]
+  },
+  {
+    "id": "ORD-1025",
+    "status": "approved",
+    "createdAt": "2024-04-10T11:02:00.000Z",
+    "updatedAt": "2024-04-11T09:12:00.000Z",
+    "total": 76,
+    "discount": 0,
+    "payment": {
+      "method": "paypal",
+      "last4": "9123",
+      "status": "captured"
+    },
+    "shipping": {
+      "name": "Kai River",
+      "email": "kai@example.com",
+      "phone": "+1-646-555-0119",
+      "address1": "44 Moonstone Terrace",
+      "address2": "",
+      "city": "Brooklyn",
+      "state": "NY",
+      "postalCode": "11231",
+      "country": "US",
+      "method": "standard"
+    },
+    "items": [
+      { "productId": "midnight-orchid-elixir", "name": "Midnight Orchid Elixir", "price": 58, "quantity": 1 },
+      { "productId": "nocturne-lavender-mist", "name": "Nocturne Lavender Mist", "price": 28, "quantity": 1 }
+    ],
+    "shippingLabel": "420112319999921245783200001234567890000151234USPS",
+    "timeline": [
+      { "status": "pending", "note": "Order received", "timestamp": "2024-04-10T11:02:00.000Z" },
+      { "status": "approved", "note": "Approved by Aurora", "timestamp": "2024-04-11T09:12:00.000Z" }
+    ]
+  }
+]

@@ -58,6 +58,15 @@ REDIS_URL=redis://default:password@localhost:6379
 - `SUPABASE_SERVICE_ROLE_KEY` enables server components and edge routes to enforce granular row-level security policies that you configure inside Supabase.
 - `REDIS_URL` is optional; if omitted the cache falls back to an in-memory Map, keeping local development frictionless.
 
+### Local data & credentials
+
+For rapid demos the project ships with JSON-backed storage under `data/` (products, orders, customers, seasonal content, and settings).
+
+- **Admin portal**: `aurora@bubblingbathdelights.com` · password `aurora-admin`
+- **Employee console**: `elysian@bubblingbathdelights.com` · password `elysian-staff`
+
+Sessions are stored in an httpOnly cookie signed with `AUTH_SECRET`. Update credentials by editing `data/settings.json` and restarting the dev server.
+
 ### Available scripts
 
 | Script         | Purpose                                             |

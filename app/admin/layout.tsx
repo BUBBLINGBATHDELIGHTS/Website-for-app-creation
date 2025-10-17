@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils/cn';
 
 const items = [
   { href: '/admin/analytics', label: 'Analytics' },
+  { href: '/admin/orders', label: 'Orders' },
+  { href: '/admin/customers', label: 'Customers' },
   { href: '/admin/products', label: 'Products' },
   { href: '/admin/ai-workbench', label: 'AI Workbench' },
 ];

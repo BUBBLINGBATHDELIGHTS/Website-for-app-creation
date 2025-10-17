@@ -1,0 +1,114 @@
+{
+  "seasonalThemes": {
+    "spring": {
+      "name": "Bloom Equinox",
+      "palette": {
+        "background": "#1A0E2A",
+        "gradientStart": "#FAD961",
+        "gradientEnd": "#F76B1C",
+        "surface": "rgba(255,255,255,0.08)",
+        "textPrimary": "#FFEFE5",
+        "textSecondary": "#F9D8C1"
+      },
+      "hero": {
+        "headline": "Spring Reveries Reimagined",
+        "subheading": "Vivid florals, effervescent citrus, and garden-fresh rituals bloom in gilded glassware.",
+        "cta": "Explore Spring Rituals",
+        "image": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1600&q=80"
+      },
+      "promotion": {
+        "title": "Equinox Glow Event",
+        "description": "Loyalty members enjoy double points on all floral collections through April 30.",
+        "countdown": "2024-04-30T23:59:59.000Z"
+      }
+    },
+    "summer": {
+      "name": "Solar Luxe",
+      "palette": {
+        "background": "#0A1B2E",
+        "gradientStart": "#FCE38A",
+        "gradientEnd": "#F38181",
+        "surface": "rgba(20,31,46,0.75)",
+        "textPrimary": "#FDF5F2",
+        "textSecondary": "#FFD2C2"
+      },
+      "hero": {
+        "headline": "A Summer of Solar Indulgence",
+        "subheading": "Sun-warmed fruits, sparkling cocktails, and luminous hydration for beach-to-ballroom evenings.",
+        "cta": "Shop Summer Collection",
+        "image": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1600&q=80"
+      },
+      "promotion": {
+        "title": "Summer Solstice Countdown",
+        "description": "Complimentary mini Solstice Polish on orders over $120 until June 21.",
+        "countdown": "2024-06-21T23:59:59.000Z"
+      }
+    },
+    "fall": {
+      "name": "Amber Harvest",
+      "palette": {
+        "background": "#1B0F0F",
+        "gradientStart": "#F6D365",
+        "gradientEnd": "#FDA085",
+        "surface": "rgba(40,20,14,0.8)",
+        "textPrimary": "#FFE8D6",
+        "textSecondary": "#FFC9B5"
+      },
+      "hero": {
+        "headline": "Decadent Nights, Velvet Rituals",
+        "subheading": "Gilded vanilla, smoked woods, and amber resins set the tone for opulent gatherings.",
+        "cta": "Discover Autumn Luxe",
+        "image": "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=1600&q=80"
+      },
+      "promotion": {
+        "title": "Harvest Moon Series",
+        "description": "Sip-and-soak evenings with chef-paired confections every weekend in October.",
+        "countdown": "2024-10-31T23:59:59.000Z"
+      }
+    },
+    "winter": {
+      "name": "Luminous Frost",
+      "palette": {
+        "background": "#050A1A",
+        "gradientStart": "#A18CD1",
+        "gradientEnd": "#FBC2EB",
+        "surface": "rgba(10,15,34,0.76)",
+        "textPrimary": "#E8F1FF",
+        "textSecondary": "#C7D9FF"
+      },
+      "hero": {
+        "headline": "Crystal Frost, Velvet Warmth",
+        "subheading": "Nordic mists, mineral soaks, and hypnotic night rituals for the coldest evenings.",
+        "cta": "Enter the Winter Atelier",
+        "image": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1600&q=80"
+      },
+      "promotion": {
+        "title": "Aurora Nightcaps",
+        "description": "Complimentary lavender sleep mist with every winter ritual duo until January 31.",
+        "countdown": "2025-01-31T23:59:59.000Z"
+      }
+    },
+    "holiday": {
+      "name": "Gilded Constellations",
+      "palette": {
+        "background": "#1A020D",
+        "gradientStart": "#FFD26F",
+        "gradientEnd": "#F5AF19",
+        "surface": "rgba(32,6,18,0.8)",
+        "textPrimary": "#FFF6E5",
+        "textSecondary": "#FFE3C4"
+      },
+      "hero": {
+        "headline": "Holiday Magic in Every Glow",
+        "subheading": "Sparkling cocoa, candied citrus, and midnight mass gatherings tailored to your inner circle.",
+        "cta": "Preview Holiday Capsule",
+        "image": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1600&q=80"
+      },
+      "promotion": {
+        "title": "Countdown to Constellations",
+        "description": "Limited atelier slots for bespoke gifting close December 20.",
+        "countdown": "2024-12-20T23:59:59.000Z"
+      }
+    }
+  }
+}
