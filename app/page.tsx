@@ -6,7 +6,7 @@ import { getActiveSeasonalTheme } from '@/lib/utils/seasonal-theme';
 import { listProducts } from '@/lib/data/products';
 import { PersonalizedRecommendations } from '@/components/product/personalized-recommendations';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 export const revalidate = 3600;
 
 function formatCountdown(target?: string) {
