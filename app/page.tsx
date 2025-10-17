@@ -2,48 +2,72 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { getActiveSeasonalTheme } from '@/lib/utils/seasonal-theme';
+import { listProducts } from '@/lib/data/products';
+import { PersonalizedRecommendations } from '@/components/product/personalized-recommendations';
 
 export const runtime = 'edge';
 export const revalidate = 3600;
 
-export default function HomePage() {
+function formatCountdown(target?: string) {
+  if (!target) return '';
+  const delta = new Date(target).getTime() - Date.now();
+  if (Number.isNaN(delta) || delta <= 0) return 'Ending soon';
+  const days = Math.floor(delta / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((delta / (1000 * 60 * 60)) % 24);
+  return `${days} days · ${hours} hours remaining`;
+}
+
+export default async function HomePage() {
+  const [{ theme }, products] = await Promise.all([
+    getActiveSeasonalTheme(),
+    listProducts(),
+  ]);
+
+  const hero = theme?.hero;
+  const promotion = theme?.promotion;
+
   return (
     <div className="space-y-16">
-      <section className="relative overflow-hidden rounded-[3rem] bg-gradient-to-r from-[#B8A8EA] to-[#7FB9A7] px-8 py-16 text-white">
-        <div className="absolute inset-0 opacity-40">
-          <Image
-            src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1400&q=80"
-            alt="Calming bath ritual"
-            fill
-            className="object-cover"
-          />
-        </div>
+      <section className="relative overflow-hidden rounded-[3rem] border border-white/40 bg-white/10 px-8 py-16 text-white shadow-2xl">
+        {hero?.image && (
+          <div className="absolute inset-0 opacity-60">
+            <Image src={hero.image} alt={hero.headline} fill className="object-cover" />
+          </div>
+        )}
         <div className="relative space-y-6">
-          <Badge className="bg-white/20 text-white/90">Emotionally intelligent commerce</Badge>
-          <h1 className="max-w-2xl font-display text-4xl md:text-5xl">
-            Build a ritual that senses your mood and glows with you.
-          </h1>
+          <Badge className="bg-black/30 text-white/90">{theme?.name ?? 'Seasonless luxury'}</Badge>
+          <h1 className="max-w-2xl font-display text-4xl md:text-5xl">{hero?.headline ?? 'Immerse Yourself in Future Luxury'}</h1>
           <p className="max-w-2xl text-lg text-white/80">
-            Bubbling Bath Delights learns from every shimmer of delight. Real-time empathy, adaptive colour palettes, and
-            autonomous AI keep your sanctuary attuned to the moment.
+            {hero?.subheading ?? 'Rich colours, dramatic lighting, and AI-guided rituals anticipate your every desire.'}
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg">
-              <Link href="/shop/products">Explore Collections</Link>
+            <Button asChild size="lg" className="bg-white/90 text-[#2F1F52] hover:bg-white">
+              <Link href="/shop/products">{hero?.cta ?? 'Explore Collections'}</Link>
             </Button>
-            <Button variant="outline" asChild size="lg">
+            <Button variant="outline" asChild size="lg" className="border-white/70 text-white">
               <Link href="/shop/customize">Craft Your Ritual</Link>
             </Button>
           </div>
         </div>
       </section>
+      {promotion && (
+        <section className="grid gap-4 rounded-[3rem] border border-white/40 bg-white/15 p-8 text-white shadow">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="font-display text-2xl">{promotion.title}</h2>
+              <p className="text-sm text-white/80">{promotion.description}</p>
+            </div>
+            <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold text-white">
+              {formatCountdown(promotion.countdown)}
+            </span>
+          </div>
+        </section>
+      )}
       <section className="grid gap-8 md:grid-cols-3">
-        {["Adaptive Rituals", "Self-Sovereign Identity", "Autonomous Insights"].map((title, index) => (
-          <div
-            key={title}
-            className="rounded-3xl border border-white/60 bg-white/80 p-6 shadow-[0_30px_60px_rgba(127,185,167,0.2)]"
-          >
-            <h2 className="font-display text-2xl text-[#2F1F52]">{title}</h2>
+        {['Adaptive Rituals', 'Self-Sovereign Identity', 'Autonomous Insights'].map((title, index) => (
+          <div key={title} className="rounded-3xl border border-white/40 bg-white/70 p-6 text-[#2F1F52] shadow-lg">
+            <h2 className="font-display text-2xl">{title}</h2>
             <p className="mt-3 text-sm text-[#4F3C75]">
               {[
                 'Framer Motion micro-interactions and mood-aware palettes tailor each session to the guest in real time.',
@@ -54,32 +78,19 @@ export default function HomePage() {
           </div>
         ))}
       </section>
-      <section className="grid gap-8 rounded-[3rem] bg-white/80 p-10 shadow-[0_40px_80px_rgba(184,168,234,0.2)]">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="font-display text-3xl text-[#2F1F52]">Featured Mood Journeys</h2>
-            <p className="text-sm text-[#4F3C75]">
-              Generated daily by our autonomous agent collective.
-            </p>
-          </div>
-          <Button asChild>
-            <Link href="/shop/products?sort=trending">See all journeys</Link>
-          </Button>
-        </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {["Lavender Orbit", "Eucalyptus Echo", "Vanilla Moon"].map((name) => (
-            <div key={name} className="rounded-3xl bg-gradient-to-br from-white to-[#F2ECFB] p-6">
-              <h3 className="font-display text-xl text-[#2F1F52]">{name}</h3>
-              <p className="mt-2 text-sm text-[#4F3C75]">
-                AI-personalised sensory layering that adapts to time of day, weather, and your emotional cadence.
-              </p>
-              <Button variant="ghost" className="mt-4" asChild>
-                <Link href={`/shop/products?highlight=${name.toLowerCase().replace(/\s+/g, '-')}`}>Open ritual</Link>
-              </Button>
-            </div>
-          ))}
-        </div>
-      </section>
+      <PersonalizedRecommendations
+        products={products.slice(0, 8).map((product) => ({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.images?.[0],
+          category: product.category,
+          season: product.season,
+          tags: product.tags,
+          rating: product.rating,
+          reviewCount: product.reviewCount,
+        }))}
+      />
     </div>
   );
 }

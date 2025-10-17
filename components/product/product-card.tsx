@@ -3,20 +3,21 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { AddToCartButton } from '@/components/product/add-to-cart-button';
+import { WishlistToggle } from '@/components/product/wishlist-toggle';
 
 export type ProductCardProps = {
   id: string;
   name: string;
   price: number;
-  hero_image?: string;
+  image?: string;
   tags?: string[];
   rating?: number;
-  review_count?: number;
+  reviewCount?: number;
 };
 
-export function ProductCard({ id, name, price, hero_image, tags = [], rating, review_count }: ProductCardProps) {
+export function ProductCard({ id, name, price, image, tags = [], rating, reviewCount }: ProductCardProps) {
   return (
     <motion.div
       whileHover={{ y: -6 }}
@@ -25,7 +26,7 @@ export function ProductCard({ id, name, price, hero_image, tags = [], rating, re
       <Link href={`/shop/products/${id}`} className="relative h-60 w-full overflow-hidden">
         <Image
           src={
-            hero_image ||
+            image ||
             'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80'
           }
           alt={name}
@@ -42,7 +43,7 @@ export function ProductCard({ id, name, price, hero_image, tags = [], rating, re
         </div>
         <div className="flex items-center gap-2 text-xs text-[#8C7BAF]">
           {rating ? `${rating.toFixed(1)} · ` : ''}
-          {review_count ? `${review_count} reviews` : 'New ritual'}
+          {reviewCount ? `${reviewCount} reviews` : 'New ritual'}
         </div>
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (
@@ -52,12 +53,8 @@ export function ProductCard({ id, name, price, hero_image, tags = [], rating, re
           ))}
         </div>
         <div className="flex gap-2">
-          <Button className="flex-1" asChild>
-            <Link href={`/shop/cart?add=${id}`}>Add to Cart</Link>
-          </Button>
-          <Button variant="outline" className="flex-1" asChild>
-            <Link href={`/shop/products/${id}#ritual`}>View Ritual</Link>
-          </Button>
+          <AddToCartButton productId={id} name={name} price={price} image={image} className="flex-1" />
+          <WishlistToggle productId={id} name={name} price={price} image={image} className="flex-1" />
         </div>
       </div>
     </motion.div>

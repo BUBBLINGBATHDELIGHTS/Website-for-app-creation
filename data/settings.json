@@ -1,0 +1,29 @@
+{
+  "adminUsers": [
+    {
+      "email": "aurora@bubblingbathdelights.com",
+      "name": "Aurora Sterling",
+      "passwordHash": "sha256:7bb222def54c88f86e854587b6cfb74495adeee17855b5f4afc3e37218c75809",
+      "roles": ["admin"],
+      "lastLoginAt": null
+    }
+  ],
+  "employeeUsers": [
+    {
+      "email": "elysian@bubblingbathdelights.com",
+      "name": "Elysian Nox",
+      "passwordHash": "sha256:79f9a41a04ded654fb25dbff73531db47d0f0d5bf30304ab62fb437cf8b7f76c",
+      "roles": ["employee"],
+      "lastLoginAt": null
+    }
+  ],
+  "loyalty": {
+    "tiers": [
+      { "id": "Lumen", "threshold": 0, "benefit": "5% ritual reward on every order" },
+      { "id": "Aurora", "threshold": 500, "benefit": "10% ritual reward plus surprise drops" },
+      { "id": "Celestia", "threshold": 1500, "benefit": "15% rewards, concierge rituals, private atelier nights" }
+    ],
+    "signupBonus": 250,
+    "referralBonus": 150
+  }
+}

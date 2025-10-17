@@ -4,10 +4,18 @@
 
 :root {
   color-scheme: light;
+  --bbd-background: #050a1a;
+  --bbd-surface: rgba(255, 255, 255, 0.12);
+  --bbd-gradient-start: #b8a8ea;
+  --bbd-gradient-end: #7fb9a7;
+  --bbd-text-primary: #fdf5f2;
+  --bbd-text-secondary: #d7cce8;
 }
 
 body {
-  @apply bg-[#FAF7F2] text-slate-900 antialiased;
+  @apply antialiased;
+  background: var(--bbd-background);
+  color: var(--bbd-text-primary);
 }
 
 ::-webkit-scrollbar {

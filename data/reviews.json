@@ -1,0 +1,32 @@
+[
+  {
+    "id": "REV-5001",
+    "productId": "auric-dawn-bath-bomb",
+    "customerName": "Lena Sol",
+    "rating": 5,
+    "title": "Sunrise in my bathtub",
+    "body": "The citrus burst feels like stepping into first light. My skin was plush afterward and the shimmer rinsed clean.",
+    "createdAt": "2024-03-18T12:10:00.000Z",
+    "photos": []
+  },
+  {
+    "id": "REV-5002",
+    "productId": "midnight-orchid-elixir",
+    "customerName": "Nova Hart",
+    "rating": 5,
+    "title": "An evening ceremony",
+    "body": "This elixir is an instant exhale. I use a few drops as a perfume oil too. Worth every indulgent drop.",
+    "createdAt": "2024-02-02T04:22:00.000Z",
+    "photos": []
+  },
+  {
+    "id": "REV-5003",
+    "productId": "glacial-mineral-soak",
+    "customerName": "Parker Wren",
+    "rating": 4,
+    "title": "Spa-grade reset",
+    "body": "Muscles melt instantly. The menthol is strong but clearing. I alternate with Celestial Tides for balance.",
+    "createdAt": "2024-01-25T20:51:00.000Z",
+    "photos": []
+  }
+]

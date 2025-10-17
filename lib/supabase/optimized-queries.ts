@@ -1,73 +1,43 @@
 import { cache } from 'react';
-import { demoProducts } from './mock-data';
+import { filterProducts, getProduct, listProducts } from '@/lib/data/products';
+import { listReviewsForProduct } from '@/lib/data/reviews';
 
-let createClient: typeof import('./server-client').createClient | null = null;
-
-async function getClient() {
-  if (!createClient) {
-    try {
-      createClient = (await import('./server-client')).createClient;
-    } catch (error) {
-      console.warn('[supabase] falling back to demo data', error);
-      return null;
-    }
-  }
-
-  try {
-    return createClient();
-  } catch (error) {
-    console.warn('[supabase] falling back to demo data', error);
-    return null;
-  }
+function parseFilters(filters: Record<string, string | number | undefined>) {
+  return {
+    search: typeof filters.search === 'string' ? filters.search : undefined,
+    category: typeof filters.category === 'string' ? filters.category : undefined,
+    season: typeof filters.season === 'string' ? (filters.season as any) : undefined,
+    tag: typeof filters.tag === 'string' ? filters.tag : undefined,
+    minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
+    maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
+  } as const;
 }
 
 export const optimizedProductQueries = {
   getProducts: cache(async (filters: Record<string, string | number | undefined> = {}) => {
-    const client = await getClient();
-    if (!client) {
-      return demoProducts;
-    }
-
-    const query = client
-      .from('products')
-      .select('id, name, price, status, hero_image, tags, rating, review_count')
-      .eq('status', 'active')
-      .limit(50);
-
-    if (filters.category) {
-      query.eq('category', filters.category as string);
-    }
-
-    if (filters.search) {
-      query.ilike('name', `%${filters.search}%`);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error(error);
-      return demoProducts;
-    }
-
-    return data ?? demoProducts;
+    const parsed = parseFilters(filters);
+    const hasFilter = Object.values(parsed).some((value) => value !== undefined);
+    const products = hasFilter ? await filterProducts(parsed) : await listProducts();
+    return products;
   }),
   getProductById: cache(async (id: string) => {
-    const client = await getClient();
-    if (!client) {
-      return demoProducts.find((product) => product.id === id) ?? null;
+    const product = await getProduct(id);
+    if (!product) {
+      return null;
     }
 
-    const { data, error } = await client
-      .from('products')
-      .select('*, related_products(id, name, hero_image, price)')
-      .eq('id', id)
-      .single();
+    const related = await filterProducts({ category: product.category });
+    const reviews = await listReviewsForProduct(product.id);
 
-    if (error) {
-      console.error(error);
-      return demoProducts.find((product) => product.id === id) ?? null;
-    }
-
-    return data;
+    return {
+      ...product,
+      related_products: related.filter((item) => item.id !== product.id).slice(0, 4).map((item) => ({
+        id: item.id,
+        name: item.name,
+        hero_image: item.images[0],
+        price: item.price,
+      })),
+      reviews,
+    };
   }),
 };
